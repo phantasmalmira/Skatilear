@@ -23,7 +23,6 @@ class command_handler {
     }
     init() {
         this.client.commands.clear();
-        this.commands = [];
         this.commands = this.readCommands(this.commandspath, '');
         this.sort_commands();
     }
@@ -69,6 +68,22 @@ class command_handler {
         }
         else {
             parentcmd.branches.push(cmd);
+        }
+    }
+    resolve_command(cmd, args, cmdobj) {
+        if (typeof cmdobj === 'undefined') {
+            if (!this.client.commands.has(cmd))
+                return null;
+            cmdobj = this.client.commands.get(cmd);
+        }
+        if (cmdobj.branches.length === 0)
+            return { args, cmdobj };
+        else {
+            const brancharg = args.shift();
+            const branchcmd = cmdobj.branches.find(o => o.name === brancharg);
+            if (branchcmd)
+                return this.resolve_command(`${cmd} ${brancharg}`, args, branchcmd);
+            return null;
         }
     }
 }

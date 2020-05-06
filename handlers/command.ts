@@ -52,8 +52,9 @@ interface command_handler {
     commandspath: string;
     init(): void;
     readCommands(path: string, basepath: string): command[];
-    sort_commands();
-    apply_command(cmd: command, parentcmd?: command);
+    sort_commands(): void;
+    apply_command(cmd: command, parentcmd?: command): void;
+    resolve_command(cmd: string, args: string[], cmdobj?: command): {args: string[], command: command};
 }
 
 class command_handler {
@@ -63,7 +64,6 @@ class command_handler {
     }
     init() {
         this.client.commands.clear();
-        this.commands = [];
         this.commands = this.readCommands(this.commandspath, '');
         this.sort_commands();
     }
@@ -111,7 +111,22 @@ class command_handler {
         else {
             parentcmd.branches.push(cmd);
         }
-
+    }
+    resolve_command(cmd: string, args: string[], cmdobj?: command) {
+        if(typeof cmdobj === 'undefined') {
+            if(!this.client.commands.has(cmd)) return null;
+            cmdobj = this.client.commands.get(cmd);
+        }
+        if(cmdobj.branches.length === 0) 
+            return {args, cmdobj};
+        else
+        {
+            const brancharg = args.shift();
+            const branchcmd = cmdobj.branches.find( o => o.name === brancharg );
+            if(branchcmd)
+                return this.resolve_command(`${cmd} ${brancharg}`, args, branchcmd);
+            return null;
+        }
     }
 }
 
