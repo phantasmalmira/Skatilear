@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import { resolveCname } from 'dns';
 
 interface JSONdb {
     dbpath: string;
