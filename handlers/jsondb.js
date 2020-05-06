@@ -32,15 +32,48 @@ const JSONdb = class {
         }
         return c_collection;
     }
-    db(db_name, traversepath, nextCollection) {
+    db(db_name, { traversepath = [], createIfMissing = true } = {}) {
+        if (createIfMissing)
+            return this._create_db(db_name, traversepath, this.collections);
+        else
+            return this._db(db_name, traversepath, this.collections);
+    }
+    _db(db_name, traversepath, nextCollection) {
         if (traversepath.length !== 0) {
             const nextlayer = traversepath.shift();
             const nextlayerIndex = nextCollection.branch.findIndex(branch => branch.name === nextlayer);
-            return this.db(db_name, traversepath, nextCollection.branch[nextlayerIndex]);
+            if (nextlayerIndex === -1)
+                throw "TraversePathInvalid";
+            return this._db(db_name, traversepath, nextCollection.branch[nextlayerIndex]);
         }
         else {
-            const targetdb = nextCollection.base.find(collection => collection.cname === db_name);
-            return targetdb;
+            const targetdb = nextCollection.base.findIndex(collection => collection.cname === db_name);
+            if (targetdb === -1)
+                throw "DBNotFound";
+            return nextCollection.base[targetdb];
+        }
+    }
+    _create_db(db_name, traversepath, nextCollection, path) {
+        if (typeof path === 'undefined')
+            path = `${this.dbpath}/${traversepath.join('/')}/${db_name}.json`;
+        if (traversepath.length !== 0) {
+            const nextlayer = traversepath.shift();
+            let nextlayerIndex = nextCollection.branch.findIndex(branch => branch.name === nextlayer);
+            if (nextlayerIndex === -1) //branch not found
+             {
+                nextCollection.branch.push(new dbCollections(nextlayer));
+                nextlayerIndex = nextCollection.branch.length - 1;
+            }
+            return this._create_db(db_name, traversepath, nextCollection.branch[nextlayerIndex], path);
+        }
+        else {
+            let targetdb = nextCollection.base.findIndex(collection => collection.cname === db_name);
+            if (targetdb === -1) // db not found
+             {
+                nextCollection.base.push(new JSONCollections(path, db_name));
+                targetdb = nextCollection.base.length - 1;
+            }
+            return nextCollection.base[targetdb];
         }
     }
 };
@@ -56,6 +89,12 @@ const JSONCollections = class {
     constructor(path, name) {
         this.cpath = path;
         this.cname = name;
+        if (!fs.existsSync(this.cpath)) {
+            const dir = this.cpath.substring(0, this.cpath.length - 5 - this.cname.length);
+            if (!fs.existsSync(dir))
+                fs.mkdirSync(dir, { recursive: true });
+            fs.writeFileSync(this.cpath, '[]');
+        }
         this.cdata = JSON.parse(fs.readFileSync(this.cpath).toString());
     }
     update_db() {

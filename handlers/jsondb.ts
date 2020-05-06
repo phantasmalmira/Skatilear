@@ -1,12 +1,14 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
+import { resolveCname } from 'dns';
 
 interface JSONdb {
     dbpath: string;
     collections: dbCollections;
     readCollection(path:string, basepath:string): dbCollections;
-    db(db_name:string, traversepath: string[], nextCollection: dbCollections): JSONCollections;
-    create_db(db_name: string, traversepath: string[], nextCollection: dbCollections, path?: string): JSONCollections;
+    db(db_name:string, {traversepath, createIfMissing}: {traversepath?: string[], createIfMissing?:boolean}): JSONCollections;
+    _db(db_name:string, traversepath: string[], nextCollection: dbCollections): JSONCollections;
+    _create_db(db_name: string, traversepath: string[], nextCollection: dbCollections, path?: string): JSONCollections;
 }
 
 const JSONdb = class {
@@ -38,21 +40,29 @@ const JSONdb = class {
         }
         return c_collection;
     }
-    db(db_name:string, traversepath: string[] ,nextCollection: dbCollections) {
+    db(db_name:string, {traversepath=[], createIfMissing=true}: {traversepath?: string[], createIfMissing?:boolean} = {}) {
+        if(createIfMissing)
+            return this._create_db(db_name, traversepath, this.collections);
+        else
+            return this._db(db_name, traversepath, this.collections);
+    }
+    _db(db_name:string, traversepath: string[] ,nextCollection: dbCollections) {
         if(traversepath.length !== 0)
         {
             const nextlayer = traversepath.shift();
             const nextlayerIndex = nextCollection.branch.findIndex( branch => branch.name === nextlayer );
-            return this.db(db_name, traversepath, nextCollection.branch[nextlayerIndex]);
+            if(nextlayerIndex === -1) throw "TraversePathInvalid";
+            return this._db(db_name, traversepath, nextCollection.branch[nextlayerIndex]);
         }
         else {
-            const targetdb = nextCollection.base.find( collection => collection.cname === db_name);
-            return targetdb;
+            const targetdb = nextCollection.base.findIndex( collection => collection.cname === db_name);
+            if(targetdb === -1) throw "DBNotFound";
+            return nextCollection.base[targetdb];
         }
     }
-    create_db(db_name: string, traversepath: string[], nextCollection: dbCollections, path?: string) {
+    _create_db(db_name: string, traversepath: string[], nextCollection: dbCollections, path?: string) {
         if(typeof path === 'undefined')
-            path = `${this.dbpath}/${traversepath.join('/')}`;
+            path = `${this.dbpath}/${traversepath.join('/')}/${db_name}.json`;
         if(traversepath.length !== 0)
         {
             const nextlayer = traversepath.shift();
@@ -62,7 +72,7 @@ const JSONdb = class {
                 nextCollection.branch.push(new dbCollections(nextlayer));
                 nextlayerIndex = nextCollection.branch.length - 1;
             }
-            return this.create_db(db_name, traversepath, nextCollection.branch[nextlayerIndex], path);
+            return this._create_db(db_name, traversepath, nextCollection.branch[nextlayerIndex], path);
         }
         else {
             let targetdb = nextCollection.base.findIndex( collection => collection.cname === db_name);
@@ -111,6 +121,13 @@ const JSONCollections = class {
     constructor(path: string, name: string) {
         this.cpath = path;
         this.cname = name;
+        if(!fs.existsSync(this.cpath))
+        {
+            const dir = this.cpath.substring(0, this.cpath.length - 5 - this.cname.length);
+            if(!fs.existsSync(dir))
+                fs.mkdirSync(dir, {recursive: true});
+            fs.writeFileSync(this.cpath, '[]');
+        }
         this.cdata = JSON.parse(fs.readFileSync(this.cpath).toString());
     }
     update_db() {

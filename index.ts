@@ -2,4 +2,6 @@ import {JSONdb} from './handlers/jsondb';
 
 const database = new JSONdb('./data');
 
-console.log(database.db('some', ['somedir'], database.collections));
+const mydb = database.db('some', {traversepath:['somedir']});
+mydb.insert({hello:'YIkeS', 'Wow': 'hahaha'});
+console.log(mydb.cdata);
