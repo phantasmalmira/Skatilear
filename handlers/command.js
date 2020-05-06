@@ -25,14 +25,10 @@ class command_handler {
         this.client.commands.clear();
         let commands = this.readCommands(this.commandspath, '');
     }
-    async readCommands(path, basepath) {
+    readCommands(path, basepath) {
         if (!path.endsWith('/'))
             path += '/';
-        //let c_name_match = path.match(/[^\/]*\//g);
-        //let c_name = c_name_match[c_name_match.length - 1];
-        //c_name = c_name.substring(0, c_name.length -1);
         let commands = [];
-        //let promises = [];
         const ls = fs.readdirSync(basepath + path);
         let dirs = [];
         let js = [];
@@ -44,16 +40,13 @@ class command_handler {
                 dirs.push(s);
         });
         for (const dir of dirs) {
-            commands = commands.concat(await this.readCommands(dir, basepath + path));
+            commands = commands.concat(this.readCommands(dir, basepath + path));
         }
         for (const _js of js) {
-            //promises.push(import(basepath+path+_js).then( (cmd) => {
-            //    commands.push(cmd.cmd);
-            //} ))
-            const cmd = await Promise.resolve().then(() => require(process.cwd() + '/' + basepath + path + _js));
-            commands.push(cmd.cmd);
+            const cmd = require(`${process.cwd()}/${basepath}${path}${_js}`);
+            if (cmd.cmd instanceof command)
+                commands.push(cmd.cmd);
         }
-        //Promise.all(promises);
         return commands;
     }
 }
