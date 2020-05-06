@@ -52,6 +52,8 @@ interface command_handler {
     commandspath: string;
     init(): void;
     readCommands(path: string, basepath: string): command[];
+    sort_commands();
+    apply_command(cmd: command, parentcmd?: command);
 }
 
 class command_handler {
@@ -61,7 +63,9 @@ class command_handler {
     }
     init() {
         this.client.commands.clear();
-        let commands = this.readCommands(this.commandspath, '');
+        this.commands = [];
+        this.commands = this.readCommands(this.commandspath, '');
+        this.sort_commands();
     }
     readCommands(path: string, basepath:string) {
         if(!path.endsWith('/')) path+= '/';
@@ -86,6 +90,28 @@ class command_handler {
         }
 
         return commands;
+    }
+    sort_commands() {
+        let sorted = this.commands.sort( (a, b) => a.parents.length - b.parents.length );
+        while(sorted.length > 0)
+        {
+            let element = sorted.shift();
+            this.apply_command(element);
+        }
+    }
+    apply_command(cmd: command, parentcmd?: command) {
+        if(typeof parentcmd === 'undefined' && cmd.parents.length === 0)
+            this.client.commands.set(cmd.name, cmd);
+        else if (cmd.parents.length !== 0) {
+            let parent = cmd.parents.shift();
+            if(typeof parentcmd === 'undefined')
+                parentcmd = this.client.commands.get(parent);
+            this.apply_command(cmd, parentcmd);
+        }
+        else {
+            parentcmd.branches.push(cmd);
+        }
+
     }
 }
 
