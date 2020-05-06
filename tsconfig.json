@@ -2,7 +2,10 @@
     "compilerOptions": {
       "lib": ["esNEXT"],
       "module": "commonjs",
-      "target": "es6",
+      "target": "es2020",
       "moduleResolution": "node"
-    }
+    },
+    "exclude": [
+      "./commands/template.ts"
+    ]
 }
