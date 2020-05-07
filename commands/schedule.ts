@@ -12,7 +12,7 @@ const cmd = new command(
     _branches : [],
     _category : '', 
     _description : '', 
-    _usage : [],
+    _usage : ['<action: add | del | list>'],
     _init : (client: myClient) => {}
     }
 )

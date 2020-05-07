@@ -10,7 +10,7 @@ const cmd = new command_1.command({
     _branches: [],
     _category: '',
     _description: '',
-    _usage: [],
+    _usage: ['<action: add | del | list>'],
     _init: (client) => { }
 });
 exports.cmd = cmd;

@@ -1,5 +1,6 @@
 import { Message } from "discord.js";
 import { myClient } from "../index";
+import * as chalk from 'chalk';
 import * as fs from 'fs';
 
 interface command {
@@ -91,7 +92,16 @@ class command_handler {
         for(const _js of js) {
             const cmd = require(`${process.cwd()}/${basepath}${path}${_js}`);
             if(cmd.cmd instanceof command)
+            {
+                let content: string;
+                if(cmd.cmd.parents.length > 0)
+                    content = `${this.client.commandprefix}${cmd.cmd.parents.join(' ')} ${cmd.cmd.name}`;
+                else
+                    content = `${this.client.commandprefix}${cmd.cmd.name}`;
+                console.log(`${chalk.greenBright('Added command')}: ${chalk.magentaBright(content)} ${chalk.yellowBright(cmd.cmd.usage.join(' '))}`);
+                cmd.cmd.init(this.client);
                 commands.push(cmd.cmd);
+            }
         }
 
         return commands;
@@ -180,11 +190,10 @@ class command_handler {
             const u_req_format = u_format.match(/\w*[^ \|]/g);
             let allowed = true;
             for(const _f of u_req_format) {
-                if( _f === '_int' && isNaN( parseInt(arg) ) ) return false; // args is req to be int
+                if( _f === '_int' && !isNaN( parseInt(arg) ) ) allowed = true; // args is req to be int
                 else if (!(arg.toLowerCase() === _f)) allowed = false;
                 else allowed = true;
                 if(allowed) break;
-                return false;
             }
             if(allowed) continue;
             return false;
