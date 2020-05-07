@@ -35,8 +35,12 @@ class myClient extends Discord.Client {
     on_ready() {
         console.log(`Logged in as ${this.user.tag}!`);
     }
-    on_msg(msg: Discord.Message) {
-
+    async on_msg(msg: Discord.Message) {
+        if(msg.author.bot) return;
+        if(!msg.content.startsWith(this.commandprefix)) return;
+        let args = msg.content.slice(client.commandprefix.length).trim().split(/ +/g);
+        let cmd = args.shift().toLowerCase();
+        this.cmd_handler.resolve_run(client, msg, cmd, args);
     }
     init_commands() {
         this.cmd_handler.init();

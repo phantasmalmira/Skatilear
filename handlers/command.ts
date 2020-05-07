@@ -6,6 +6,7 @@ interface command {
     name: string;
     aliases: string[];
     parents: string[];
+    _parents: string[];
     branches: command[];
     category: string;
     description: string;
@@ -38,6 +39,7 @@ class command {
         this.security = _security;
         this.aliases = _aliases;
         this.parents = _parents;
+        this._parents = [];
         this.branches = _branches;
         this.category = _category;
         this.description = _description;
@@ -55,6 +57,8 @@ interface command_handler {
     sort_commands(): void;
     apply_command(cmd: command, parentcmd?: command): void;
     resolve_command(cmd: string, args: string[], cmdobj?: command): {args: string[], command: command};
+    valid_args(cmdobj: command, args: string[]): boolean;
+    resolve_run(client: myClient, msg: Message, cmd: string, args: string[]): Promise<void>;
 }
 
 class command_handler {
@@ -65,6 +69,7 @@ class command_handler {
     init() {
         this.client.commands.clear();
         this.commands = this.readCommands(this.commandspath, '');
+        this.commands.forEach( command => command._parents = [...command.parents]);
         this.sort_commands();
     }
     readCommands(path: string, basepath:string) {
@@ -100,10 +105,10 @@ class command_handler {
         }
     }
     apply_command(cmd: command, parentcmd?: command) {
-        if(typeof parentcmd === 'undefined' && cmd.parents.length === 0)
+        if(typeof parentcmd === 'undefined' && cmd._parents.length === 0)
             this.client.commands.set(cmd.name, cmd);
-        else if (cmd.parents.length !== 0) {
-            let parent = cmd.parents.shift();
+        else if (cmd._parents.length !== 0) {
+            let parent = cmd._parents.shift();
             if(typeof parentcmd === 'undefined')
                 parentcmd = this.client.commands.get(parent);
             this.apply_command(cmd, parentcmd);
@@ -114,19 +119,77 @@ class command_handler {
     }
     resolve_command(cmd: string, args: string[], cmdobj?: command) {
         if(typeof cmdobj === 'undefined') {
-            if(!this.client.commands.has(cmd)) return null;
-            cmdobj = this.client.commands.get(cmd);
+            if(!this.client.commands.has(cmd)) 
+            {
+                cmdobj = this.client.commands.find( o => {
+                    if(o.aliases.find( alias => alias === cmd)) return true;
+                    return false;
+                }); // Try to look for aliases
+                if(!cmdobj) return null;
+            }
+            else
+                cmdobj = this.client.commands.get(cmd);
         }
         if(cmdobj.branches.length === 0) 
-            return {args, cmdobj};
+            return {args: args, command: cmdobj};
         else
         {
             const brancharg = args.shift();
-            const branchcmd = cmdobj.branches.find( o => o.name === brancharg );
+            let branchcmd = cmdobj.branches.find( o => o.name === brancharg );
+            if(!branchcmd)
+            {
+                branchcmd = cmdobj.branches.find( o => {
+                    if(o.aliases.find( alias => alias === brancharg)) return true;
+                    return false;
+                }); // Try to look for aliases
+            }
             if(branchcmd)
                 return this.resolve_command(`${cmd} ${brancharg}`, args, branchcmd);
-            return null;
+            else
+            {
+                if(brancharg)
+                    args.unshift(brancharg);
+                return {args: args, command: cmdobj};
+            }
         }
+    }
+    async resolve_run(client: myClient, msg: Message, cmd: string, args: string[]) {
+        const run = this.resolve_command(cmd, args);
+        if(this.valid_args(run.command, run.args))
+            run.command.run(client, msg, run.args);
+        else {
+            let content: string;
+            if(run.command.parents.length > 0)
+                content = `${client.commandprefix}${run.command.parents.join(' ')} ${run.command.name} ${run.command.usage.join(' ')}`;
+            else
+                content = `${client.commandprefix}${run.command.name} ${run.command.usage.join(' ')}`;
+            msg.channel.send(`Usage: \`${content}\``);
+        }
+    }
+    valid_args(cmdobj: command, args: string[]) {
+        const usage = cmdobj.usage;
+        let reqargs = 0;
+        usage.forEach( u => {if (!u.includes('?')) ++reqargs;} );
+        if(args.length < reqargs) return false;
+        for(let i = 0; i < args.length; ++i) {
+            const arg = args[i];
+            const u_req = usage[i];
+            if(!u_req) break; //undefined usage req for this arg, out-of-bounds
+            if(!u_req.includes(':')) continue; //no special req for this arg
+            const u_format = u_req.substring(u_req.indexOf(':') + 1, u_req.length - 1).trim();
+            const u_req_format = u_format.match(/\w*[^ \|]/g);
+            let allowed = true;
+            for(const _f of u_req_format) {
+                if( _f === '_int' && isNaN( parseInt(arg) ) ) return false; // args is req to be int
+                else if (!(arg.toLowerCase() === _f)) allowed = false;
+                else allowed = true;
+                if(allowed) break;
+                return false;
+            }
+            if(allowed) continue;
+            return false;
+        }
+        return true;
     }
 }
 

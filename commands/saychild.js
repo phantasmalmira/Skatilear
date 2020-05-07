@@ -2,18 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../handlers/command");
 const cmd = new command_1.command({
-    _name: 'say',
+    _name: 'say_child',
     _run: async (client, msg, args) => {
-        const content = args.join(' ');
-        msg.channel.send(content);
+        msg.channel.send('say_child run');
     },
     _security: [],
-    _aliases: [],
-    _parents: [],
+    _aliases: ['sc'],
+    _parents: ['say'],
     _branches: [],
     _category: '',
     _description: '',
-    _usage: ['<message>'],
+    _usage: ['<abc>', '<bcd>'],
     _init: (client) => { }
 });
 exports.cmd = cmd;

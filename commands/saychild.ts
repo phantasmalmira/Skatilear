@@ -4,18 +4,17 @@ import { Message } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'say',
+    _name: 'say_child',
     _run: async (client: myClient, msg: Message, args: string[]) => {
-        const content = args.join(' ');
-        msg.channel.send(content);
+        msg.channel.send('say_child run');
     },
     _security: [],
-    _aliases : [], 
-    _parents : [], 
+    _aliases : ['sc'], 
+    _parents : ['say'], 
     _branches : [],
     _category : '', 
     _description : '', 
-    _usage : ['<message>'],
+    _usage : ['<abc>', '<bcd>'],
     _init : (client: myClient) => {}
     }
 )
