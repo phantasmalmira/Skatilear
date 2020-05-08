@@ -14,7 +14,6 @@ class myClient extends Discord.Client {
         this.commandprefix = _commandprefix;
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
-        this.scheduleds = new Discord.Collection();
         this.cmd_handler = new CMDS.command_handler(this, './commands/');
         this.init_commands();
     }

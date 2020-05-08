@@ -1,15 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../handlers/command");
+const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
     _name: 'list',
     _run: async (client, msg, args) => {
-        if (client.scheduleds.size == 0)
+        if (!client.scheduleds.has(msg.guild.id))
+            client.scheduleds.set(msg.guild.id, new discord_js_1.Collection());
+        if (client.scheduleds.get(msg.guild.id).size == 0)
             msg.channel.send(`There are no scheduled tasks.`);
         else {
             let avail_keys = '';
             let keyindex = 1;
-            client.scheduleds.forEach((val, key) => {
+            client.scheduleds.get(msg.guild.id).forEach((val, key) => {
                 avail_keys += `${keyindex}: ${key}\n`;
                 ++keyindex;
             });

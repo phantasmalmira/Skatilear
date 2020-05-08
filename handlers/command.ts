@@ -99,7 +99,6 @@ class command_handler {
                 else
                     content = `${this.client.commandprefix}${cmd.cmd.name}`;
                 console.log(`${chalk.greenBright('Added command')}: ${chalk.magentaBright(content)} ${chalk.yellowBright(cmd.cmd.usage.join(' '))}`);
-                cmd.cmd.init(this.client);
                 commands.push(cmd.cmd);
             }
         }
@@ -111,6 +110,7 @@ class command_handler {
         while(sorted.length > 0)
         {
             let element = sorted.shift();
+            element.init(this.client);
             this.apply_command(element);
         }
     }

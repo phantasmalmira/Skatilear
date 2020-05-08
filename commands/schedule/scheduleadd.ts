@@ -1,11 +1,12 @@
 import {command} from '../../handlers/command';
-import {myClient} from '../../index';
-import { Message } from 'discord.js';
+//import {myClient} from '../../index';
+import {schedClient} from './schedule';
+import { Message, Collection } from 'discord.js';
 
 const cmd = new command(
     {
     _name: 'add',
-    _run: async (client: myClient, msg: Message, args: string[]) => {
+    _run: async (client: schedClient, msg: Message, args: string[]) => {
         const interval = parseInt(args.shift());
         const cmd = args.shift();
         const res_cmd = client.cmd_handler.resolve_command(cmd, args);
@@ -15,6 +16,7 @@ const cmd = new command(
             const cmdobj = res_cmd.command;
             if(client.cmd_handler.valid_args(cmdobj, cmdargs))
             {
+                if(!client.scheduleds.has(msg.guild.id)) client.scheduleds.set(msg.guild.id, new Collection());
                 const s_args = res_cmd.args.length > 0 ? ` ${args.join(' ')}`: '';
                 let schedid:string;
                 const validchars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -25,10 +27,11 @@ const cmd = new command(
                         randid += validchars.charAt(Math.floor(Math.random() * validchars.length));
                     }
                     schedid = randid;
-                } while (client.scheduleds.has(schedid));
+                } while (client.scheduleds.get(msg.guild.id).has(schedid));
                 msg.reply(`Added the following command to run every ${interval}s\`\`\`${cmd}${s_args}\`\`\`SCHEDID: ${schedid}`);
 
-                client.scheduleds.set(schedid, setInterval( 
+                
+                client.scheduleds.get(msg.guild.id).set(schedid, setInterval( 
                     () => {cmdobj.run(client, msg, cmdargs)},
                     interval * 1000
                 ));
@@ -45,7 +48,7 @@ const cmd = new command(
     _category : '', 
     _description : '', 
     _usage : ['<interval[seconds]:_int>', '<command>', '<args?...>'],
-    _init : (client: myClient) => {}
+    _init : (client: schedClient) => {}
     }
 )
 export {cmd};

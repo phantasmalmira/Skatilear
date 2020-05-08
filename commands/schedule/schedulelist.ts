@@ -1,17 +1,18 @@
 import {command} from '../../handlers/command';
-import {myClient} from '../../index';
-import { Message } from 'discord.js';
+import {schedClient} from './schedule';
+import { Message, Collection } from 'discord.js';
 
 const cmd = new command(
     {
     _name: 'list',
-    _run: async (client: myClient, msg: Message, args: string[]) => {
-        if(client.scheduleds.size == 0)
+    _run: async (client: schedClient, msg: Message, args: string[]) => {
+        if(!client.scheduleds.has(msg.guild.id)) client.scheduleds.set(msg.guild.id, new Collection());
+        if(client.scheduleds.get(msg.guild.id).size == 0)
             msg.channel.send(`There are no scheduled tasks.`);
         else {
             let avail_keys:string = '';
             let keyindex = 1;
-            client.scheduleds.forEach((val, key) => {
+            client.scheduleds.get(msg.guild.id).forEach((val, key) => {
                 avail_keys += `${keyindex}: ${key}\n`;
                 ++keyindex;
             });
@@ -26,7 +27,7 @@ const cmd = new command(
     _category : '', 
     _description : '', 
     _usage : [],
-    _init : (client: myClient) => {}
+    _init : (client: schedClient) => {}
     }
 )
 export {cmd};

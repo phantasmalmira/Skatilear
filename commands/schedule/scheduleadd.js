@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../handlers/command");
+const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
     _name: 'add',
     _run: async (client, msg, args) => {
@@ -12,6 +13,8 @@ const cmd = new command_1.command({
             const cmdargs = res_cmd.args;
             const cmdobj = res_cmd.command;
             if (client.cmd_handler.valid_args(cmdobj, cmdargs)) {
+                if (!client.scheduleds.has(msg.guild.id))
+                    client.scheduleds.set(msg.guild.id, new discord_js_1.Collection());
                 const s_args = res_cmd.args.length > 0 ? ` ${args.join(' ')}` : '';
                 let schedid;
                 const validchars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -21,9 +24,9 @@ const cmd = new command_1.command({
                         randid += validchars.charAt(Math.floor(Math.random() * validchars.length));
                     }
                     schedid = randid;
-                } while (client.scheduleds.has(schedid));
+                } while (client.scheduleds.get(msg.guild.id).has(schedid));
                 msg.reply(`Added the following command to run every ${interval}s\`\`\`${cmd}${s_args}\`\`\`SCHEDID: ${schedid}`);
-                client.scheduleds.set(schedid, setInterval(() => { cmdobj.run(client, msg, cmdargs); }, interval * 1000));
+                client.scheduleds.get(msg.guild.id).set(schedid, setInterval(() => { cmdobj.run(client, msg, cmdargs); }, interval * 1000));
             }
         }
         else {

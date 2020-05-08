@@ -2,7 +2,6 @@ import {JSONdb} from './handlers/jsondb';
 import * as Discord from 'discord.js';
 import * as CMDS from './handlers/command';
 import * as dotenv from 'dotenv';
-import { stringify } from 'querystring';
 
 
 interface myClient {
@@ -11,7 +10,6 @@ interface myClient {
     commandprefix: string;
     commands: Discord.Collection<string, CMDS.command>;
     aliases: Discord.Collection<string, string>;
-    scheduleds: Discord.Collection<string, NodeJS.Timer>;
     cmd_handler: CMDS.command_handler;
     init_commands():void;
     on_ready():void;
@@ -28,7 +26,6 @@ class myClient extends Discord.Client {
         this.commandprefix = _commandprefix;
         this.commands = new Discord.Collection<string, CMDS.command>();
         this.aliases = new Discord.Collection<string, string>();
-        this.scheduleds = new Discord.Collection<string, NodeJS.Timer>();
         this.cmd_handler = new CMDS.command_handler(this, './commands/');
         this.init_commands();
     }
