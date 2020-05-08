@@ -1,5 +1,5 @@
-import {command} from '../handlers/command';
-import {myClient} from '../index';
+import {command} from '../../handlers/command';
+import {myClient} from '../../index';
 import { Message } from 'discord.js';
 
 const cmd = new command(

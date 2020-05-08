@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = require("../handlers/command");
+const command_1 = require("../../handlers/command");
 const cmd = new command_1.command({
     _name: 'del',
     _run: async (client, msg, args) => {
