@@ -45,7 +45,7 @@ const cmd = new command(
     _aliases : [], 
     _parents : ['schedule'], 
     _branches : [],
-    _category : '', 
+    _category : 'Technical', 
     _description : '', 
     _usage : ['<interval[seconds]:_int>', '<command>', '<args?...>'],
     _init : (client: schedClient) => {}

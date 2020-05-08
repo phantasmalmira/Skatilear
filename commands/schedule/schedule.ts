@@ -15,7 +15,7 @@ const cmd = new command(
     _aliases : ['sched'], 
     _parents : [], 
     _branches : [],
-    _category : '', 
+    _category : 'Technical', 
     _description : '', 
     _usage : ['<action: add | del | list>'],
     _init : (client: schedClient) => {

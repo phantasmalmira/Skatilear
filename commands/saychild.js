@@ -10,7 +10,7 @@ const cmd = new command_1.command({
     _aliases: ['sc'],
     _parents: ['say'],
     _branches: [],
-    _category: '',
+    _category: 'Misc',
     _description: '',
     _usage: ['<abc>', '<bcd>'],
     _init: (client) => { }

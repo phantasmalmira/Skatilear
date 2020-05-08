@@ -11,7 +11,7 @@ const cmd = new command_1.command({
     _aliases: [],
     _parents: [],
     _branches: [],
-    _category: '',
+    _category: 'Info',
     _description: '',
     _usage: ['<message>'],
     _init: (client) => { }
