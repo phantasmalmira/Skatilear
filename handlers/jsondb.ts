@@ -103,6 +103,7 @@ interface JSONCollections {
     cpath: string;
     cname: string;
     cdata: object[];
+    data: object[];
     update_db(): boolean;
     insert(item: object): boolean;
     delete(item: object): boolean;
@@ -114,12 +115,14 @@ interface JSONCollections {
     replaceAll(query: object, vals: object): boolean;
     forEach(callback: (arg0: object) => void): void;
     forEachIf(query: object, callback: (arg0: object) => void): void;
+    rowSetHandler(target, prop, value, receiver): boolean;
 }
 
 const JSONCollections = class {
     constructor(path: string, name: string) {
         this.cpath = path;
         this.cname = name;
+        this.data = [];
         if(!fs.existsSync(this.cpath))
         {
             const dir = this.cpath.substring(0, this.cpath.length - 5 - this.cname.length);
@@ -128,6 +131,9 @@ const JSONCollections = class {
             fs.writeFileSync(this.cpath, '[]');
         }
         this.cdata = JSON.parse(fs.readFileSync(this.cpath).toString());
+        this.cdata.forEach( e => {
+            this.data.push(new Proxy(e, {set: this.rowSetHandler}))
+        } , this);
     }
     update_db() {
         try {
@@ -142,17 +148,19 @@ const JSONCollections = class {
     }
     insert(item: object) {
         this.cdata.push(item);
+        this.data.push(new Proxy(item, {set: this.rowSetHandler}));
         return this.update_db();
     }
     delete(item: object) {
         let index = this.cdata.findIndex( data => _.isEqual(data, item) );
         if (index === -1) return false;
         this.cdata.splice(index, 1);
+        this.data.splice(index, 1);
         return this.update_db();
     }
     filter(query: object) {
         let query_k = Object.keys(query);
-        let result_f = this.cdata.filter( element => {
+        let result_f = this.data.filter( element => {
             for( const _k of query_k ) {
                 if (!element.hasOwnProperty(_k)) return false;
                 let _q = query[_k];
@@ -178,7 +186,7 @@ const JSONCollections = class {
     }
     find(query: object) {
         let query_k = Object.keys(query);
-        let result_f = this.cdata.find( element => {
+        let result_f = this.data.find( element => {
             for( const _k of query_k ) {
                 if (!element.hasOwnProperty(_k)) return false;
                 let _q = query[_k];
@@ -237,12 +245,17 @@ const JSONCollections = class {
         return this.update_db();
     }
     forEach(callback: (arg0: object) => void) {
-        this.cdata.forEach(callback);
+        this.data.forEach(callback);
     }
     forEachIf(query: object, callback: (arg0: object) => void) {
         let query_i = this.filterIndex(query);
         for( const i of query_i )
-            callback(this.cdata[i]);
+            callback(this.data[i]);
+    }
+    rowSetHandler(target, prop, value, receiver) {
+        Reflect.set(target, prop, value);
+        this.update_db();
+        return true;
     }
 }
 
