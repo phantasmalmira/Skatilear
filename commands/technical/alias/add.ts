@@ -30,7 +30,7 @@ const cmd = new command(
     _aliases : [], 
     _parents : ['alias'], 
     _branches : [],
-    _category : '', 
+    _category : 'Alias', 
     _description : '', 
     _usage : ['<alias>', '<command>', '<args?...>'],
     _init : (client: myClient) => {}

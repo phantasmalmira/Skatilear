@@ -24,7 +24,7 @@ const cmd = new command_1.command({
     _aliases: [],
     _parents: ['alias'],
     _branches: [],
-    _category: '',
+    _category: 'Alias',
     _description: '',
     _usage: ['<alias>'],
     _init: (client) => { }

@@ -5,15 +5,15 @@ const child_man = (prefix, cmdobj) => {
     let helpstr = [];
     let content = '';
     if (cmdobj.parents.length > 0)
-        content = `+ ${prefix}${cmdobj.parents.join(' ')} ${cmdobj.name} ${cmdobj.usage.join(' ')}`.trim();
+        content = `◈ ${prefix}${cmdobj.parents.join(' ')} ${cmdobj.name} ${cmdobj.usage.join(' ')}`.trim();
     else
-        content = `+ ${prefix}${cmdobj.name} ${cmdobj.usage.join(' ')}`.trim();
+        content = `◈ ${prefix}${cmdobj.name} ${cmdobj.usage.join(' ')}`.trim();
     helpstr.push(content + '\n');
     if (cmdobj.branches.length > 0) {
         for (const branchend of cmdobj.branches) {
             const branchend_h = child_man(prefix, branchend);
             for (const _end of branchend_h) {
-                helpstr.push(`- ${_end}`);
+                helpstr.push(`─${_end}`);
             }
         }
     }
@@ -33,15 +33,19 @@ const cmd = new command_1.command({
         });
         for (const cat of cmdcategories) {
             const curcat = client.commands.filter(val => val.category === cat);
-            help_ += `# ${cat}\n`;
+            help_ += `**${cat}**\n`;
             curcat.forEach(item => {
                 for (const e of child_man(client.commandprefix, item)) {
-                    help_ += `- ${e}`;
+                    help_ += `├${e}`;
                 }
             });
             help_ += '\n';
+            help_ = help_.substring(0, help_.lastIndexOf('├')) + '└' + help_.substring(help_.lastIndexOf('├') + 1);
         }
-        msg.channel.send(`\`\`\`markdown\n${help_}\`\`\``);
+        msg.channel.send({ embed: {
+                title: "❔📖 Help page ",
+                description: help_
+            } });
     },
     _security: [],
     _aliases: [],
