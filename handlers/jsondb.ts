@@ -113,8 +113,8 @@ interface JSONCollections {
     findIndex(query: object): number;
     replace(query: object, vals: object): boolean;
     replaceAll(query: object, vals: object): boolean;
-    forEach(callback: (arg0: object) => void): void;
-    forEachIf(query: object, callback: (arg0: object) => void): void;
+    forEach(callback: (arg0) => void): void;
+    forEachIf(query: object, callback: (arg0) => void): void;
     rowSetHandler(target, prop, value, receiver): boolean;
 }
 
@@ -244,10 +244,10 @@ const JSONCollections = class {
         }
         return this.update_db();
     }
-    forEach(callback: (arg0: object) => void) {
+    forEach(callback: (arg0) => void) {
         this.data.forEach(callback);
     }
-    forEachIf(query: object, callback: (arg0: object) => void) {
+    forEachIf(query: object, callback: (arg0) => void) {
         let query_i = this.filterIndex(query);
         for( const i of query_i )
             callback(this.data[i]);

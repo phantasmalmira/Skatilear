@@ -167,6 +167,13 @@ class command_handler {
         const run = this.resolve_command(cmd, args);
         if(run && this.valid_args(run.command, run.args))
             run.command.run(client, msg, run.args);
+        else if (client.aliases.has(cmd)) {
+            let fullargs = client.aliases.get(cmd).split(/ +/g).concat(args);
+            let aliascmd = fullargs.shift();
+            let _run = this.resolve_command(aliascmd, fullargs);
+            if(_run && this.valid_args(_run.command, _run.args))
+                _run.command.run(client, msg, _run.args);
+        }
         else {
             let content: string;
             if(run.command.parents.length > 0)

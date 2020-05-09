@@ -28,6 +28,9 @@ const cmd = new command_1.command({
                 msg.reply(`Added the following command to run every ${interval}s\`\`\`${cmd}${s_args}\`\`\`SCHEDID: ${schedid}`);
                 client.scheduleds.get(msg.guild.id).set(schedid, setInterval(() => { cmdobj.run(client, msg, cmdargs); }, interval * 1000));
             }
+            else {
+                msg.reply(`The argument for the given command is not valid.`);
+            }
         }
         else {
             msg.reply(`\`${cmd}\` is not a valid command.`);

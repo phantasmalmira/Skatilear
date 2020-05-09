@@ -36,6 +36,9 @@ const cmd = new command(
                     interval * 1000
                 ));
             }
+            else {
+                msg.reply(`The argument for the given command is not valid.`);
+            }
         }
         else {
             msg.reply(`\`${cmd}\` is not a valid command.`);
