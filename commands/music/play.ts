@@ -50,6 +50,12 @@ const cmd = new command(
         const arg0 = args.shift();
         if(ytdl.validateURL(arg0))
         {
+            ytdl.getBasicInfo(arg0).then(info => {
+                msg.channel.send({embed: {
+                    title: 'Selected song 🎵',
+                    description: info.title
+                }});
+            })
             if(!client.music.has(msg.guild.id)) client.music.set(msg.guild.id, new musicPlayer());
             client.music.get(msg.guild.id).queue.push(arg0);
 

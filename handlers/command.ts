@@ -174,13 +174,16 @@ class command_handler {
             if(_run && this.valid_args(_run.command, _run.args))
                 _run.command.run(client, msg, _run.args);
         }
-        else {
+        else if(run){
             let content: string;
             if(run.command.parents.length > 0)
                 content = `${client.commandprefix}${run.command.parents.join(' ')} ${run.command.name} ${run.command.usage.join(' ')}`;
             else
                 content = `${client.commandprefix}${run.command.name} ${run.command.usage.join(' ')}`;
             msg.channel.send(`Usage: \`${content}\``);
+        }
+        else {
+            msg.channel.send(`Unknown command ${cmd}. Please check \`${client.commandprefix}help\`.`);
         }
     }
     valid_args(cmdobj: command, args: string[]) {
