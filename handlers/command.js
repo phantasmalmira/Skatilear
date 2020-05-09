@@ -118,7 +118,7 @@ class command_handler {
     }
     async resolve_run(client, msg, cmd, args) {
         const run = this.resolve_command(cmd, args);
-        if (this.valid_args(run.command, run.args))
+        if (run && this.valid_args(run.command, run.args))
             run.command.run(client, msg, run.args);
         else {
             let content;

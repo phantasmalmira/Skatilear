@@ -89,6 +89,7 @@ const JSONCollections = class {
     constructor(path, name) {
         this.cpath = path;
         this.cname = name;
+        this.data = [];
         if (!fs.existsSync(this.cpath)) {
             const dir = this.cpath.substring(0, this.cpath.length - 5 - this.cname.length);
             if (!fs.existsSync(dir))
@@ -96,6 +97,9 @@ const JSONCollections = class {
             fs.writeFileSync(this.cpath, '[]');
         }
         this.cdata = JSON.parse(fs.readFileSync(this.cpath).toString());
+        this.cdata.forEach(e => {
+            this.data.push(new Proxy(e, { set: this.rowSetHandler }));
+        }, this);
     }
     update_db() {
         try {
@@ -109,6 +113,7 @@ const JSONCollections = class {
     }
     insert(item) {
         this.cdata.push(item);
+        this.data.push(new Proxy(item, { set: this.rowSetHandler }));
         return this.update_db();
     }
     delete(item) {
@@ -116,11 +121,12 @@ const JSONCollections = class {
         if (index === -1)
             return false;
         this.cdata.splice(index, 1);
+        this.data.splice(index, 1);
         return this.update_db();
     }
     filter(query) {
         let query_k = Object.keys(query);
-        let result_f = this.cdata.filter(element => {
+        let result_f = this.data.filter(element => {
             for (const _k of query_k) {
                 if (!element.hasOwnProperty(_k))
                     return false;
@@ -147,7 +153,7 @@ const JSONCollections = class {
     }
     find(query) {
         let query_k = Object.keys(query);
-        let result_f = this.cdata.find(element => {
+        let result_f = this.data.find(element => {
             for (const _k of query_k) {
                 if (!element.hasOwnProperty(_k))
                     return false;
@@ -206,11 +212,16 @@ const JSONCollections = class {
         return this.update_db();
     }
     forEach(callback) {
-        this.cdata.forEach(callback);
+        this.data.forEach(callback);
     }
     forEachIf(query, callback) {
         let query_i = this.filterIndex(query);
         for (const i of query_i)
-            callback(this.cdata[i]);
+            callback(this.data[i]);
+    }
+    rowSetHandler(target, prop, value, receiver) {
+        Reflect.set(target, prop, value);
+        this.update_db();
+        return true;
     }
 };

@@ -1,7 +1,8 @@
 import {command} from '../../handlers/command';
 import {myClient} from '../../index';
-import { Message, Collection, StreamDispatcher, VoiceConnection } from 'discord.js';
+import { Message, Collection, StreamDispatcher, VoiceConnection, MessageReaction, User } from 'discord.js';
 import * as ytdl from 'ytdl-core';
+import * as ytsr from 'ytsr';
 
 interface musicClient extends myClient {
     music: Collection<string, musicPlayer>;
@@ -21,11 +22,11 @@ class musicPlayer {
 
 export{musicClient, musicPlayer};
 
-const ytpattern = RegExp('^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$');
+const ytpattern = RegExp(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/);
 
 const play_yt = (conn: VoiceConnection, msg: Message, client: musicClient) => {
     let player = client.music.get(msg.guild.id);
-    player.player = conn.play(ytdl(player.queue[0], {filter:"audioonly"}));
+    player.player = conn.play(ytdl(player.queue[0], {filter:"audioonly", highWaterMark: 1<<25}));
     player.queue.shift();
     player.player.on('finish', () => {
         if(player.queue[0]) {
@@ -35,6 +36,7 @@ const play_yt = (conn: VoiceConnection, msg: Message, client: musicClient) => {
             conn.disconnect();
         }
     });
+    player.player.on('error', console.error);
 };
 
 const cmd = new command(
@@ -46,8 +48,8 @@ const cmd = new command(
             return;
         }
         const arg0 = args.shift();
-        //if(ytpattern.test(arg0))
-        //{
+        if(ytdl.validateURL(arg0))
+        {
             if(!client.music.has(msg.guild.id)) client.music.set(msg.guild.id, new musicPlayer());
             client.music.get(msg.guild.id).queue.push(arg0);
 
@@ -56,7 +58,65 @@ const cmd = new command(
             .then( connection => {
                 play_yt(connection, msg, client);
             });
-        //}
+        }
+        else {
+            let searchResult = [];
+            await ytsr(`${arg0} ${args.join(' ')}`, {limit: 10})
+            .then( (res) => {
+                res.items.forEach( i => {
+                    if(i.title && i.link && i.author)
+                        searchResult.push({title: i.title, uri: i.link, author: i.author});
+                    });
+            });
+            let msgcontent = '';
+            const emojifilters = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'];
+            searchResult.forEach((e, i) => {
+                if(i < 5) 
+                msgcontent += `${emojifilters[i]} ➤ [${e.title}](${e.uri})\n > By: [${e.author.name}](${e.author.ref})\n\n`;
+            });
+            const reactionfilter = (reaction: MessageReaction, user: User) => {
+                if(emojifilters.find(e => e === reaction.emoji.name) && user.id === msg.author.id)
+                    return true;
+                return false;
+            };
+            const bot_msg = await msg.channel.send({embed: {
+                title: 'Search result 🔍',
+                description: msgcontent,
+                footer: {text: `${msg.author.tag} 🔍 ${arg0} ${args.join(' ')}`, icon_url: msg.author.displayAvatarURL()},
+                timestamp: new Date()
+            }
+            });
+            emojifilters.forEach(e => {bot_msg.react(e).catch(err => console.error(`Probably too early exited: ${err}`))});
+            bot_msg.awaitReactions(reactionfilter, {maxEmojis: 1, time:15000})
+            .then(collected => {
+                let sel = emojifilters.findIndex( e => e === collected.keyArray()[0]);
+                bot_msg.delete();
+                if(sel === -1) 
+                {
+                    msg.channel.send({embed: {
+                        title: 'No selected song ⛔',
+                        description: `${msg.author.tag} has not selected a song in time.`
+                    }});
+                    throw new Error('No song chosen within time');
+                }
+                msg.channel.send({embed: {
+                    title: 'Selected song 🎵',
+                    description: searchResult[sel].title
+                }});
+                return sel;
+            }).then( (sel) => {
+                setTimeout(() => {
+                    if(!client.music.has(msg.guild.id)) client.music.set(msg.guild.id, new musicPlayer());
+                    client.music.get(msg.guild.id).queue.push(searchResult[sel].uri);
+        
+        
+                    if(!msg.guild.voice || !msg.guild.voice.connection) msg.member.voice.channel.join()
+                    .then( connection => {
+                        play_yt(connection, msg, client);
+                    });
+                }, 500)
+            }).catch(console.error);
+        }
     },
     _security: [],
     _aliases : [], 
