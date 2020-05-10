@@ -4,6 +4,12 @@ const command_1 = require("../../handlers/command");
 const discord_js_1 = require("discord.js");
 const ytdl = require("ytdl-core");
 const ytsr = require("ytsr");
+class song {
+    constructor(title, uri) {
+        this.title = title;
+        this.uri = uri;
+    }
+}
 class musicPlayer {
     constructor() {
         this.player = null;
@@ -14,9 +20,11 @@ exports.musicPlayer = musicPlayer;
 const ytpattern = RegExp(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/);
 const play_yt = (conn, msg, client) => {
     let player = client.music.get(msg.guild.id);
-    player.player = conn.play(ytdl(player.queue[0], { filter: "audioonly", highWaterMark: 1 << 25 }));
-    player.queue.shift();
+    player.player = conn.play(ytdl(player.queue[0].uri, { filter: "audioonly", highWaterMark: 1 << 25 }));
+    if (!client.cursong.has(msg.guild.id))
+        client.cursong.set(msg.guild.id, player.queue.shift());
     player.player.on('finish', () => {
+        client.cursong.delete(msg.guild.id);
         if (player.queue[0]) {
             play_yt(conn, msg, client);
         }
@@ -40,15 +48,16 @@ const cmd = new command_1.command({
                         title: 'Selected song 🎵',
                         description: info.title
                     } });
+                if (!client.music.has(msg.guild.id))
+                    client.music.set(msg.guild.id, new musicPlayer());
+                client.music.get(msg.guild.id).queue.push(new song(info.title, info.video_url));
+            }).then(() => {
+                if (!msg.guild.voice || !msg.guild.voice.connection)
+                    msg.member.voice.channel.join()
+                        .then(connection => {
+                        play_yt(connection, msg, client);
+                    });
             });
-            if (!client.music.has(msg.guild.id))
-                client.music.set(msg.guild.id, new musicPlayer());
-            client.music.get(msg.guild.id).queue.push(arg0);
-            if (!msg.guild.voice || !msg.guild.voice.connection)
-                msg.member.voice.channel.join()
-                    .then(connection => {
-                    play_yt(connection, msg, client);
-                });
         }
         else {
             let searchResult = [];
@@ -77,7 +86,6 @@ const cmd = new command_1.command({
                     timestamp: new Date()
                 }
             });
-            emojifilters.forEach(e => { bot_msg.react(e).catch(err => console.error(`Probably too early exited: ${err}`)); });
             bot_msg.awaitReactions(reactionfilter, { maxEmojis: 1, time: 15000 })
                 .then(collected => {
                 let sel = emojifilters.findIndex(e => e === collected.keyArray()[0]);
@@ -98,7 +106,7 @@ const cmd = new command_1.command({
                 setTimeout(() => {
                     if (!client.music.has(msg.guild.id))
                         client.music.set(msg.guild.id, new musicPlayer());
-                    client.music.get(msg.guild.id).queue.push(searchResult[sel].uri);
+                    client.music.get(msg.guild.id).queue.push(new song(searchResult[sel].title, searchResult[sel].uri));
                     if (!msg.guild.voice || !msg.guild.voice.connection)
                         msg.member.voice.channel.join()
                             .then(connection => {
@@ -106,6 +114,16 @@ const cmd = new command_1.command({
                         });
                 }, 500);
             }).catch(console.error);
+            try {
+                await bot_msg.react(emojifilters[0]);
+                await bot_msg.react(emojifilters[1]);
+                await bot_msg.react(emojifilters[2]);
+                await bot_msg.react(emojifilters[3]);
+                await bot_msg.react(emojifilters[4]);
+            }
+            catch (e) {
+                console.error(e);
+            }
         }
     },
     _security: [],
@@ -117,6 +135,7 @@ const cmd = new command_1.command({
     _usage: ['<link | search>'],
     _init: (client) => {
         client.music = new discord_js_1.Collection();
+        client.cursong = new discord_js_1.Collection();
     }
 });
 exports.cmd = cmd;

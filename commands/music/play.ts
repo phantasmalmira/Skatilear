@@ -6,11 +6,24 @@ import * as ytsr from 'ytsr';
 
 interface musicClient extends myClient {
     music: Collection<string, musicPlayer>;
+    cursong: Collection<string, song>;
 }
 
 interface musicPlayer {
     player: StreamDispatcher;
-    queue: any[];
+    queue: song[];
+}
+
+interface song {
+    title: string;
+    uri: string;
+}
+
+class song {
+    constructor(title: string, uri: string) {
+        this.title = title;
+        this.uri = uri;
+    }
 }
 
 class musicPlayer {
@@ -26,9 +39,10 @@ const ytpattern = RegExp(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|you
 
 const play_yt = (conn: VoiceConnection, msg: Message, client: musicClient) => {
     let player = client.music.get(msg.guild.id);
-    player.player = conn.play(ytdl(player.queue[0], {filter:"audioonly", highWaterMark: 1<<25}));
-    player.queue.shift();
+    player.player = conn.play(ytdl(player.queue[0].uri, {filter:"audioonly", highWaterMark: 1<<25}));
+    if(!client.cursong.has(msg.guild.id)) client.cursong.set(msg.guild.id, player.queue.shift());
     player.player.on('finish', () => {
+        client.cursong.delete(msg.guild.id);
         if(player.queue[0]) {
             play_yt(conn, msg, client);
         }
@@ -55,14 +69,13 @@ const cmd = new command(
                     title: 'Selected song 🎵',
                     description: info.title
                 }});
-            })
-            if(!client.music.has(msg.guild.id)) client.music.set(msg.guild.id, new musicPlayer());
-            client.music.get(msg.guild.id).queue.push(arg0);
-
-
-            if(!msg.guild.voice || !msg.guild.voice.connection) msg.member.voice.channel.join()
-            .then( connection => {
-                play_yt(connection, msg, client);
+                if(!client.music.has(msg.guild.id)) client.music.set(msg.guild.id, new musicPlayer());
+                client.music.get(msg.guild.id).queue.push(new song(info.title, info.video_url));
+            }).then( () => {
+                if(!msg.guild.voice || !msg.guild.voice.connection) msg.member.voice.channel.join()
+                .then( connection => {
+                    play_yt(connection, msg, client);
+                });
             });
         }
         else {
@@ -92,7 +105,6 @@ const cmd = new command(
                 timestamp: new Date()
             }
             });
-            emojifilters.forEach(e => {bot_msg.react(e).catch(err => console.error(`Probably too early exited: ${err}`))});
             bot_msg.awaitReactions(reactionfilter, {maxEmojis: 1, time:15000})
             .then(collected => {
                 let sel = emojifilters.findIndex( e => e === collected.keyArray()[0]);
@@ -113,7 +125,7 @@ const cmd = new command(
             }).then( (sel) => {
                 setTimeout(() => {
                     if(!client.music.has(msg.guild.id)) client.music.set(msg.guild.id, new musicPlayer());
-                    client.music.get(msg.guild.id).queue.push(searchResult[sel].uri);
+                    client.music.get(msg.guild.id).queue.push(new song(searchResult[sel].title, searchResult[sel].uri));
         
         
                     if(!msg.guild.voice || !msg.guild.voice.connection) msg.member.voice.channel.join()
@@ -122,6 +134,17 @@ const cmd = new command(
                     });
                 }, 500)
             }).catch(console.error);
+            try {
+                await bot_msg.react(emojifilters[0]);
+                await bot_msg.react(emojifilters[1]);
+                await bot_msg.react(emojifilters[2]);
+                await bot_msg.react(emojifilters[3]);
+                await bot_msg.react(emojifilters[4]);
+            }
+            catch(e) {
+                //console.error(e);
+                // Error raised when the msg reaction is fulfilled before all react are done.
+            }
         }
     },
     _security: [],
@@ -133,6 +156,7 @@ const cmd = new command(
     _usage : ['<link | search>'],
     _init : (client: musicClient) => {
         client.music = new Collection();
+        client.cursong = new Collection();
     }
     }
 )
