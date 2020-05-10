@@ -122,7 +122,8 @@ const cmd = new command_1.command({
                 await bot_msg.react(emojifilters[4]);
             }
             catch (e) {
-                console.error(e);
+                //console.error(e);
+                // Error raised when the msg reaction is fulfilled before all react are done.
             }
         }
     },

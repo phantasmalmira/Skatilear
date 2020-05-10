@@ -97,8 +97,12 @@ const JSONCollections = class {
             fs.writeFileSync(this.cpath, '[]');
         }
         this.cdata = JSON.parse(fs.readFileSync(this.cpath).toString());
+        this.rowHandler = {
+            set: this.rowSetHandler,
+            proxyParent: this
+        };
         this.cdata.forEach(e => {
-            this.data.push(new Proxy(e, { set: this.rowSetHandler }));
+            this.data.push(new Proxy(e, this.rowHandler));
         }, this);
     }
     update_db() {
@@ -113,7 +117,7 @@ const JSONCollections = class {
     }
     insert(item) {
         this.cdata.push(item);
-        this.data.push(new Proxy(item, { set: this.rowSetHandler }));
+        this.data.push(new Proxy(item, this.rowHandler));
         return this.update_db();
     }
     delete(item) {
@@ -221,7 +225,8 @@ const JSONCollections = class {
     }
     rowSetHandler(target, prop, value, receiver) {
         Reflect.set(target, prop, value);
-        this.update_db();
+        this.proxyParent.update_db();
         return true;
     }
 };
+exports.JSONCollections = JSONCollections;

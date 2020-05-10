@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsondb_1 = require("./handlers/jsondb");
+const setting_1 = require("./handlers/setting");
 const Discord = require("discord.js");
 const CMDS = require("./handlers/command");
 const dotenv = require("dotenv");
@@ -11,6 +12,7 @@ class myClient extends Discord.Client {
         this.on('message', this.on_msg);
         this.authtoken = _authtoken;
         this.db = new jsondb_1.JSONdb(db_path);
+        this.settings = new setting_1.settings(this.db);
         this.commandprefix = _commandprefix;
         this.commands = new Discord.Collection();
         this.aliases = new Discord.Collection();
