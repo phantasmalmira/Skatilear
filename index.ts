@@ -1,4 +1,5 @@
 import {JSONdb} from './handlers/jsondb';
+import {settings} from './handlers/setting';
 import * as Discord from 'discord.js';
 import * as CMDS from './handlers/command';
 import * as dotenv from 'dotenv';
@@ -11,6 +12,7 @@ interface myClient {
     commands: Discord.Collection<string, CMDS.command>;
     aliases: Discord.Collection<string, string>;
     cmd_handler: CMDS.command_handler;
+    settings: settings;
     init_commands():void;
     on_ready():void;
     on_msg(msg: Discord.Message):void;
@@ -23,6 +25,7 @@ class myClient extends Discord.Client {
         this.on('message', this.on_msg);
         this.authtoken = _authtoken;
         this.db = new JSONdb(db_path);
+        this.settings = new settings(this.db);
         this.commandprefix = _commandprefix;
         this.commands = new Discord.Collection<string, CMDS.command>();
         this.aliases = new Discord.Collection<string, string>();

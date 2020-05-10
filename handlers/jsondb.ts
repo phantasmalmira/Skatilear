@@ -109,7 +109,7 @@ interface JSONCollections {
     delete(item: object): boolean;
     filter(query: object): object[];
     filterIndex(query: object): number[];
-    find(query: object): object[];
+    find(query: object): any;
     findIndex(query: object): number;
     replace(query: object, vals: object): boolean;
     replaceAll(query: object, vals: object): boolean;
@@ -259,4 +259,4 @@ const JSONCollections = class {
     }
 }
 
-export {JSONdb};
+export {JSONdb, JSONCollections};
