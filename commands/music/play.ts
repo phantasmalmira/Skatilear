@@ -158,7 +158,7 @@ const cmd = new command(
         client.music = new Collection();
         client.cursong = new Collection();
     },
-    //allow_args: (args: string[]) => {return true;},
+    allow_args: (msg: Message, args: string[]) => {return args.length > 0;},
     }
 )
 export {cmd};

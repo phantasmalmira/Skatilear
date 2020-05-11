@@ -15,7 +15,7 @@ interface command {
     security: security[];
     run(client: myClient, msg: Message, args: string[]): void;
     init(client: myClient): void;
-    allow_args(args: string[]): boolean;
+    allow_args(msg: Message, args: string[]): boolean;
 }
 
 type security = 
@@ -34,7 +34,7 @@ class command {
             aliases = [], parents = [], branches = [],
             category = '', description = '', usage = [],
             init,
-            allow_args = (args: string[]) => {return true}
+            allow_args,
         }:{
             name: string, 
             run: (client: myClient, msg: Message, args:string[]) => void,
@@ -42,7 +42,7 @@ class command {
             aliases?:string[], parents?:string[], branches?:command[],
             category?:string, description?:string, usage?:string[],
             init?:(client: myClient) => void,
-            allow_args?:(args:string[]) => boolean
+            allow_args?:(msg:Message, args:string[]) => boolean
         }) 
     {
         this.name = name;
@@ -205,15 +205,10 @@ class command_handler {
         // Check for valid args and perms
         if(res_cmdobj && res_cmdargs) { // if both are defined
             if(this.has_perms(client, res_cmdobj, msg)) { // if user has perms
-                if(this.valid_args(res_cmdobj, res_cmdargs)) {
+                if(!res_cmdobj.allow_args || res_cmdobj.allow_args(msg, res_cmdargs)) {
                     res_cmdobj.run(client, msg, res_cmdargs);
                 } else {
-                    let content:string;
-                    if(res_cmdobj.parents.length > 0)
-                        content = `${client.commandprefix}${res_cmdobj.parents.join(' ')} ${res_cmdobj.name} ${res_cmdobj.usage.join(' ')}`;
-                    else
-                        content = `${client.commandprefix}${res_cmdobj.name} ${res_cmdobj.usage.join(' ')}`;
-                    msg.channel.send(`Usage: \`${content}\``);
+                    msg.channel.send(`Usage: \`${client.commandprefix}${res_cmdobj.pretty_usage()}\``);
                 }
             }
             else { // User has no perms

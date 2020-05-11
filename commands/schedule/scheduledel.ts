@@ -26,7 +26,7 @@ const cmd = new command(
     description : '', 
     usage : ['<schedid>'],
     //init : (client: schedClient) => {},
-    //allow_args: (args: string[]) => {return true;},
+    allow_args: (msg: Message, args: string[]) => {return args.length > 0;},
     }
 )
 export {cmd};

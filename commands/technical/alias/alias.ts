@@ -19,7 +19,7 @@ const cmd = new command(
             client.aliases.set(item.alias, item.fcmd); 
         });
     },
-    //allow_args: (args: string[]) => {return true;},
+    allow_args: (msg: Message, args: string[]) => {return false;},
     }
 )
 export {cmd};

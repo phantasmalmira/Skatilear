@@ -24,5 +24,7 @@ const cmd = new command_1.command({
     category: 'Technical',
     description: '',
     usage: ['<schedid>'],
+    //init : (client: schedClient) => {},
+    allow_args: (msg, args) => { return args.length > 0; },
 });
 exports.cmd = cmd;

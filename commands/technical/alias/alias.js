@@ -17,5 +17,6 @@ const cmd = new command_1.command({
             client.aliases.set(item.alias, item.fcmd);
         });
     },
+    allow_args: (msg, args) => { return false; },
 });
 exports.cmd = cmd;

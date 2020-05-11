@@ -23,5 +23,6 @@ const cmd = new command_1.command({
             client.commandprefix = prefix;
         }
     },
+    allow_args: (msg, args) => { return args.length >= 1; },
 });
 exports.cmd = cmd;

@@ -31,7 +31,7 @@ const cmd = new command(
     description : '', 
     usage : ['<alias>'],
     //init : (client: myClient) => {},
-    //allow_args: (args: string[]) => {return true;},
+    allow_args: (msg: Message, args: string[]) => {return args.length >= 1;},
     }
 )
 export {cmd};

@@ -54,9 +54,15 @@ const cmd = new command(
     branches : [],
     category : 'Technical', 
     description : '', 
-    usage : ['<interval[seconds]:_int>', '<command>', '<args?...>'],
+    usage : ['<interval[seconds]:int>', '<command>', '<args?...>'],
     //init : (client: schedClient) => {},
-    //allow_args: (args: string[]) => {return true;},
+    allow_args: (msg: Message, args: string[]) => {
+        if(args.length < 2) return false;
+        const tryint = parseInt(args[0]);
+        if(isNaN(tryint)) return false;
+        if(tryint < 15) {msg.reply(`Minimum interval for schedule is 15 seconds`); return false;}
+        return true;
+    },
     }
 )
 export {cmd};

@@ -15,5 +15,6 @@ const cmd = new command_1.command({
     init: (client) => {
         client.scheduleds = new discord_js_1.Collection();
     },
+    allow_args: (msg, args) => { return false; },
 });
 exports.cmd = cmd;

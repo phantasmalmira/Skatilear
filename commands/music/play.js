@@ -138,5 +138,6 @@ const cmd = new command_1.command({
         client.music = new discord_js_1.Collection();
         client.cursong = new discord_js_1.Collection();
     },
+    allow_args: (msg, args) => { return args.length > 0; },
 });
 exports.cmd = cmd;

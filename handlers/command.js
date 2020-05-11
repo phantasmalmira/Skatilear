@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = require("chalk");
 const fs = require("fs");
 class command {
-    constructor({ name = "", run = (client, msg, args) => { }, security = [], aliases = [], parents = [], branches = [], category = '', description = '', usage = [], init, allow_args = (args) => { return true; } }) {
+    constructor({ name = "", run = (client, msg, args) => { }, security = [], aliases = [], parents = [], branches = [], category = '', description = '', usage = [], init, allow_args, }) {
         this.name = name;
         this.run = run;
         this.security = security;
@@ -148,16 +148,11 @@ class command_handler {
         // Check for valid args and perms
         if (res_cmdobj && res_cmdargs) { // if both are defined
             if (this.has_perms(client, res_cmdobj, msg)) { // if user has perms
-                if (this.valid_args(res_cmdobj, res_cmdargs)) {
+                if (!res_cmdobj.allow_args || res_cmdobj.allow_args(msg, res_cmdargs)) {
                     res_cmdobj.run(client, msg, res_cmdargs);
                 }
                 else {
-                    let content;
-                    if (res_cmdobj.parents.length > 0)
-                        content = `${client.commandprefix}${res_cmdobj.parents.join(' ')} ${res_cmdobj.name} ${res_cmdobj.usage.join(' ')}`;
-                    else
-                        content = `${client.commandprefix}${res_cmdobj.name} ${res_cmdobj.usage.join(' ')}`;
-                    msg.channel.send(`Usage: \`${content}\``);
+                    msg.channel.send(`Usage: \`${client.commandprefix}${res_cmdobj.pretty_usage()}\``);
                 }
             }
             else { // User has no perms

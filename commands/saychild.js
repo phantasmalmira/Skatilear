@@ -13,5 +13,7 @@ const cmd = new command_1.command({
     category: 'Misc',
     description: '',
     usage: ['<abc>', '<bcd>'],
+    // init : (client: myClient) => {},
+    allow_args: (msg, args) => { return args.length >= 2; },
 });
 exports.cmd = cmd;

@@ -21,7 +21,7 @@ const cmd = new command(
     init : (client: schedClient) => {
         client.scheduleds = new Collection<string, Collection<string, NodeJS.Timer>>()
     },
-    //allow_args: (args: string[]) => {return true;},
+    allow_args: (msg: Message, args: string[]) => {return false;},
     }
 )
 export {cmd};
