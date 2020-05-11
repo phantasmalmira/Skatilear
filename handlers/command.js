@@ -119,23 +119,40 @@ class command_handler {
         }
     }
     async resolve_run(client, msg, cmd, args) {
-        const run = this.resolve_command(cmd, args);
-        if (run && this.valid_args(run.command, run.args))
-            run.command.run(client, msg, run.args);
-        else if (client.aliases.has(cmd)) {
-            let fullargs = client.aliases.get(cmd).split(/ +/g).concat(args);
-            let aliascmd = fullargs.shift();
-            let _run = this.resolve_command(aliascmd, fullargs);
-            if (_run && this.valid_args(_run.command, _run.args))
-                _run.command.run(client, msg, _run.args);
+        const res_cmd = this.resolve_command(cmd, args);
+        let res_cmdobj;
+        let res_cmdargs;
+        if (res_cmd) {
+            res_cmdobj = res_cmd.command;
+            res_cmdargs = res_cmd.args;
         }
-        else if (run) {
-            let content;
-            if (run.command.parents.length > 0)
-                content = `${client.commandprefix}${run.command.parents.join(' ')} ${run.command.name} ${run.command.usage.join(' ')}`;
-            else
-                content = `${client.commandprefix}${run.command.name} ${run.command.usage.join(' ')}`;
-            msg.channel.send(`Usage: \`${content}\``);
+        else if (client.aliases.has(cmd)) {
+            const faliasargs = client.aliases.get(cmd).split(/ +/g).concat(args);
+            const aliascmd = faliasargs.shift();
+            const alias_res_cmd = this.resolve_command(aliascmd, faliasargs);
+            if (alias_res_cmd) {
+                res_cmdobj = alias_res_cmd.command;
+                res_cmdargs = alias_res_cmd.args;
+            }
+        }
+        // Check for valid args and perms
+        if (res_cmdobj && res_cmdargs) { // if both are defined
+            if (this.has_perms(client, res_cmdobj, msg)) { // if user has perms
+                if (this.valid_args(res_cmdobj, res_cmdargs)) {
+                    res_cmdobj.run(client, msg, res_cmdargs);
+                }
+                else {
+                    let content;
+                    if (res_cmdobj.parents.length > 0)
+                        content = `${client.commandprefix}${res_cmdobj.parents.join(' ')} ${res_cmdobj.name} ${res_cmdobj.usage.join(' ')}`;
+                    else
+                        content = `${client.commandprefix}${res_cmdobj.name} ${res_cmdobj.usage.join(' ')}`;
+                    msg.channel.send(`Usage: \`${content}\``);
+                }
+            }
+            else { // User has no perms
+                msg.reply(`Sorry, you do not have the following permissions.\n\`\`\`${res_cmdobj.security.join('\n')}\`\`\``);
+            }
         }
         else {
             msg.channel.send(`Unknown command ${cmd}. Please check \`${client.commandprefix}help\`.`);
@@ -171,6 +188,20 @@ class command_handler {
             if (allowed)
                 continue;
             return false;
+        }
+        return true;
+    }
+    has_perms(client, cmdobj, msg) {
+        let req_perms = [...cmdobj.security]; // Shallow copy
+        while (req_perms.length > 0) {
+            const cur_perm = req_perms.shift();
+            if (cur_perm === 'BOT_OWNER') {
+                if (msg.author.id !== client.botownerid)
+                    return false;
+            }
+            else if (cur_perm === 'DISABLED') {
+                return false;
+            }
         }
         return true;
     }

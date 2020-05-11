@@ -8,7 +8,7 @@ const cmd = new command(
     _run: async (client: myClient, msg: Message, args: string[]) => {
         msg.channel.send('say_child run');
     },
-    _security: [],
+    _security: ['DISABLED'],
     _aliases : ['sc'], 
     _parents : ['say'], 
     _branches : [],

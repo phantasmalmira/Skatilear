@@ -11,7 +11,7 @@ const cmd = new command(
         msg.channel.send(`Reloaded ${nCmds} commands.`);
         console.log(`Reloaded ${nCmds} commands.`);
     },
-    _security: [],
+    _security: ['BOT_OWNER'],
     _aliases : [], 
     _parents : [], 
     _branches : [],

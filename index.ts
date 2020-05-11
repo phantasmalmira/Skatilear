@@ -8,6 +8,7 @@ import * as dotenv from 'dotenv';
 interface myClient {
     db: JSONdb;
     authtoken: string;
+    botownerid: string;
     commandprefix: string;
     commands: Discord.Collection<string, CMDS.command>;
     aliases: Discord.Collection<string, string>;
@@ -19,11 +20,12 @@ interface myClient {
 }
 
 class myClient extends Discord.Client {
-    constructor(_authtoken:string, db_path: string, _commandprefix: string){
+    constructor(_authtoken:string, _botownerid: string, db_path: string, _commandprefix: string){
         super();
         this.on('ready', this.on_ready);
         this.on('message', this.on_msg);
         this.authtoken = _authtoken;
+        this.botownerid = _botownerid;
         this.db = new JSONdb(db_path);
         this.settings = new settings(this.db);
         this.commandprefix = _commandprefix;
@@ -52,5 +54,5 @@ class myClient extends Discord.Client {
 export {myClient};
 
 dotenv.config();
-const client = new myClient(process.env.d_AuthToken, './data/', '!');
+const client = new myClient(process.env.d_AuthToken, process.env.d_BotOwner,'./data/', '!');
 client.login();

@@ -6,11 +6,12 @@ const Discord = require("discord.js");
 const CMDS = require("./handlers/command");
 const dotenv = require("dotenv");
 class myClient extends Discord.Client {
-    constructor(_authtoken, db_path, _commandprefix) {
+    constructor(_authtoken, _botownerid, db_path, _commandprefix) {
         super();
         this.on('ready', this.on_ready);
         this.on('message', this.on_msg);
         this.authtoken = _authtoken;
+        this.botownerid = _botownerid;
         this.db = new jsondb_1.JSONdb(db_path);
         this.settings = new setting_1.settings(this.db);
         this.commandprefix = _commandprefix;
@@ -40,5 +41,5 @@ class myClient extends Discord.Client {
 }
 exports.myClient = myClient;
 dotenv.config();
-const client = new myClient(process.env.d_AuthToken, './data/', '!');
+const client = new myClient(process.env.d_AuthToken, process.env.d_BotOwner, './data/', '!');
 client.login();
