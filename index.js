@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsondb_1 = require("./handlers/jsondb");
 const setting_1 = require("./handlers/setting");
-const Chalk = require("chalk");
 const Discord = require("discord.js");
 const CMDS = require("./handlers/command");
 const dotenv = require("dotenv");
@@ -31,7 +30,6 @@ class myClient extends Discord.Client {
             return;
         let args = msg.content.slice(client.commandprefix.length).trim().split(/ +/g);
         let cmd = args.shift().toLowerCase();
-        console.log(`${Chalk.redBright(`(${msg.guild.name})`)} ${Chalk.greenBright(msg.author.username)} ⇶ ${Chalk.yellowBright(this.commandprefix)}${Chalk.magentaBright(`${cmd} ${args.join(' ')}`)}`);
         this.cmd_handler.resolve_run(client, msg, cmd, args);
     }
     init_commands() {

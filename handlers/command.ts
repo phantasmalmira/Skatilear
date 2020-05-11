@@ -16,6 +16,8 @@ interface command {
     run(client: myClient, msg: Message, args: string[]): void;
     init(client: myClient): void;
     allow_args(msg: Message, args: string[]): boolean;
+    pretty_usage(): string;
+    getCallCommand(): string;
 }
 
 type security = 
@@ -59,12 +61,16 @@ class command {
         this.allow_args = allow_args;
     }
     pretty_usage() {
-        let content = this.name;
-        if(this.parents.length > 0)
-            content = `${this.parents.join(' ')} ${content}`;
+        let content = this.getCallCommand();
         if(this.usage.length > 0)
             content += ` ${this.usage.join(' ')}`;
         return content;
+    }
+    getCallCommand() {
+        if(this.parents.length > 0)
+            return `${this.parents.join(' ')} ${this.name}`;
+        else
+            return this.name;
     }
 }
 
@@ -190,6 +196,7 @@ class command_handler {
         const res_cmd = this.resolve_command(cmd, args);
         let res_cmdobj: command;
         let res_cmdargs: string[];
+        let isAlias = false;
         if(res_cmd) {
             res_cmdobj = res_cmd.command;
             res_cmdargs = res_cmd.args;
@@ -198,6 +205,7 @@ class command_handler {
             const aliascmd = faliasargs.shift();
             const alias_res_cmd = this.resolve_command(aliascmd, faliasargs);
             if(alias_res_cmd) {
+                isAlias = true;
                 res_cmdobj = alias_res_cmd.command;
                 res_cmdargs = alias_res_cmd.args;
             }
@@ -206,7 +214,11 @@ class command_handler {
         if(res_cmdobj && res_cmdargs) { // if both are defined
             if(this.has_perms(client, res_cmdobj, msg)) { // if user has perms
                 if(!res_cmdobj.allow_args || res_cmdobj.allow_args(msg, res_cmdargs)) {
+                    let log = `${chalk.redBright(`(${msg.guild.name})`)} ${chalk.greenBright(msg.author.username)} ⇶ ${chalk.magentaBright(client.commandprefix+res_cmdobj.getCallCommand())} ${chalk.yellowBright(res_cmdargs.join(' '))}`.trim();
                     res_cmdobj.run(client, msg, res_cmdargs);
+                    if(isAlias)
+                        log += ' ' + chalk.cyanBright(`[${client.commandprefix}${(cmd + ' ' + args.join(' ')).trim()}]`);
+                    console.log(log);
                 } else {
                     msg.channel.send(`Usage: \`${client.commandprefix}${res_cmdobj.pretty_usage()}\``);
                 }
