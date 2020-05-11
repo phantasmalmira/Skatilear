@@ -23,7 +23,7 @@ const cmd = new command(
             msg.reply(`\`${alias}\` is not an alias, check ${client.commandprefix}alias list.`);
         }
     },
-    security: [],
+    security: ['MANAGE_GUILD'],
     aliases : [], 
     parents : ['alias'], 
     branches : [],

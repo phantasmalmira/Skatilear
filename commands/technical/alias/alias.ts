@@ -6,7 +6,7 @@ const cmd = new command(
     {
     name: 'alias',
     run: async (client: myClient, msg: Message, args: string[]) => {},
-    security: [],
+    security: ['MANAGE_GUILD'],
     aliases : [], 
     parents : [], 
     branches : [],

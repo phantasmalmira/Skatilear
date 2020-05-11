@@ -27,7 +27,7 @@ const cmd = new command(
             msg.reply(`\`${cmd}\` is not a valid command.`);
         }
     },
-    security: [],
+    security: ['MANAGE_GUILD'],
     aliases : [], 
     parents : ['alias'], 
     branches : [],

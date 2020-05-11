@@ -5,7 +5,7 @@ const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
     name: 'alias',
     run: async (client, msg, args) => { },
-    security: [],
+    security: ['MANAGE_GUILD'],
     aliases: [],
     parents: [],
     branches: [],

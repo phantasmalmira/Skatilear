@@ -16,7 +16,7 @@ const cmd = new command_1.command({
             msgcontent += 'No aliases found';
         msg.channel.send(`List of aliases:\n\`\`\`markdown\n${msgcontent}\`\`\``);
     },
-    security: [],
+    security: ['MANAGE_GUILD'],
     aliases: [],
     parents: ['alias'],
     branches: [],
