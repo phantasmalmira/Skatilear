@@ -18,7 +18,8 @@ const cmd = new command(
         aliasdb.forEach((item) => {
             client.aliases.set(item.alias, item.fcmd); 
         });
-    }
+    },
+    //allow_args: (args: string[]) => {return true;},
     }
 )
 export {cmd};

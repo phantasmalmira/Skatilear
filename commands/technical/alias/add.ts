@@ -33,7 +33,8 @@ const cmd = new command(
     category : 'Alias', 
     description : '', 
     usage : ['<alias>', '<command>', '<args?...>'],
-    init : (client: myClient) => {}
+    //init : (client: myClient) => {},
+    //allow_args: (args: string[]) => {return true;},
     }
 )
 export {cmd};

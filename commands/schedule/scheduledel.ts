@@ -25,7 +25,8 @@ const cmd = new command(
     category : 'Technical', 
     description : '', 
     usage : ['<schedid>'],
-    init : (client: schedClient) => {}
+    //init : (client: schedClient) => {},
+    //allow_args: (args: string[]) => {return true;},
     }
 )
 export {cmd};

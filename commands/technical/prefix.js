@@ -22,6 +22,6 @@ const cmd = new command_1.command({
             console.log(`Changed prefix from ${client.commandprefix} to ${prefix}`);
             client.commandprefix = prefix;
         }
-    }
+    },
 });
 exports.cmd = cmd;

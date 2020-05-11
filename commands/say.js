@@ -14,6 +14,5 @@ const cmd = new command_1.command({
     category: 'Info',
     description: '',
     usage: ['<message>'],
-    init: (client) => { }
 });
 exports.cmd = cmd;

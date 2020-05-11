@@ -22,6 +22,5 @@ const cmd = new command_1.command({
     category: 'Music',
     description: '',
     usage: [],
-    init: (client) => { }
 });
 exports.cmd = cmd;

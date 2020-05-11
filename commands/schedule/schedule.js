@@ -14,6 +14,6 @@ const cmd = new command_1.command({
     usage: ['<action: add | del | list>'],
     init: (client) => {
         client.scheduleds = new discord_js_1.Collection();
-    }
+    },
 });
 exports.cmd = cmd;

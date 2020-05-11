@@ -20,7 +20,8 @@ const cmd = new command(
     usage : ['<action: add | del | list>'],
     init : (client: schedClient) => {
         client.scheduleds = new Collection<string, Collection<string, NodeJS.Timer>>()
-    }
+    },
+    //allow_args: (args: string[]) => {return true;},
     }
 )
 export {cmd};

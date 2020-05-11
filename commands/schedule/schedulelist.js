@@ -27,6 +27,5 @@ const cmd = new command_1.command({
     category: 'Technical',
     description: '',
     usage: [],
-    init: (client) => { }
 });
 exports.cmd = cmd;

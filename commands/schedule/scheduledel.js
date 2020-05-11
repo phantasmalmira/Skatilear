@@ -24,6 +24,5 @@ const cmd = new command_1.command({
     category: 'Technical',
     description: '',
     usage: ['<schedid>'],
-    init: (client) => { }
 });
 exports.cmd = cmd;

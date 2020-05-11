@@ -157,7 +157,8 @@ const cmd = new command(
     init : (client: musicClient) => {
         client.music = new Collection();
         client.cursong = new Collection();
-    }
+    },
+    //allow_args: (args: string[]) => {return true;},
     }
 )
 export {cmd};

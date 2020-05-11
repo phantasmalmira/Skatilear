@@ -16,6 +16,6 @@ const cmd = new command_1.command({
         aliasdb.forEach((item) => {
             client.aliases.set(item.alias, item.fcmd);
         });
-    }
+    },
 });
 exports.cmd = cmd;

@@ -13,6 +13,5 @@ const cmd = new command_1.command({
     category: 'Misc',
     description: '',
     usage: ['<abc>', '<bcd>'],
-    init: (client) => { }
 });
 exports.cmd = cmd;

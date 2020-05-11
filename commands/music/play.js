@@ -137,6 +137,6 @@ const cmd = new command_1.command({
     init: (client) => {
         client.music = new discord_js_1.Collection();
         client.cursong = new discord_js_1.Collection();
-    }
+    },
 });
 exports.cmd = cmd;

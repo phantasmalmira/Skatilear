@@ -23,7 +23,8 @@ const cmd = new command(
     category : 'Music', 
     description : '', 
     usage : [],
-    init : (client: musicClient) => {}
+    //init : (client: musicClient) => {},
+    //allow_args: (args: string[]) => {return true;},
     }
 )
 export {cmd};

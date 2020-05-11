@@ -58,6 +58,14 @@ class command {
         this.init = init;
         this.allow_args = allow_args;
     }
+    pretty_usage() {
+        let content = this.name;
+        if(this.parents.length > 0)
+            content = `${this.parents.join(' ')} ${content}`;
+        if(this.usage.length > 0)
+            content += ` ${this.usage.join(' ')}`;
+        return content;
+    }
 }
 
 interface command_handler {

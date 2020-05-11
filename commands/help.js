@@ -54,6 +54,5 @@ const cmd = new command_1.command({
     category: 'Info',
     description: '',
     usage: [],
-    init: (client) => { }
 });
 exports.cmd = cmd;

@@ -15,7 +15,8 @@ const cmd = new command(
     category : 'Misc', 
     description : '', 
     usage : ['<abc>', '<bcd>'],
-    init : (client: myClient) => {}
+    // init : (client: myClient) => {},
+    // allow_args: (args: string[]) => {return true;},
     }
 )
 export {cmd};
