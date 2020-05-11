@@ -32,7 +32,7 @@ class myClient extends Discord.Client {
         this.cmd_handler.resolve_run(client, msg, cmd, args);
     }
     init_commands() {
-        this.cmd_handler.init();
+        return this.cmd_handler.init();
     }
     login() {
         return super.login(this.authtoken);

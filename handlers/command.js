@@ -27,7 +27,9 @@ class command_handler {
         this.client.commands.clear();
         this.commands = this.readCommands(this.commandspath, '');
         this.commands.forEach(command => command._parents = [...command.parents]);
+        const nCmds = this.commands.length;
         this.sort_commands();
+        return nCmds;
     }
     readCommands(path, basepath) {
         if (!path.endsWith('/'))

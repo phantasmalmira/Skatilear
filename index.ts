@@ -13,7 +13,7 @@ interface myClient {
     aliases: Discord.Collection<string, string>;
     cmd_handler: CMDS.command_handler;
     settings: settings;
-    init_commands():void;
+    init_commands():number;
     on_ready():void;
     on_msg(msg: Discord.Message):void;
 }
@@ -43,7 +43,7 @@ class myClient extends Discord.Client {
         this.cmd_handler.resolve_run(client, msg, cmd, args);
     }
     init_commands() {
-        this.cmd_handler.init();
+        return this.cmd_handler.init();
     }
     login(){
         return super.login(this.authtoken);
