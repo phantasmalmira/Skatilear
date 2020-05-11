@@ -1,5 +1,5 @@
 import {command} from '../../../handlers/command';
-import { Message } from 'discord.js';
+import { Message, Collection } from 'discord.js';
 import {myClient} from '../../../index';
 
 const cmd = new command(
@@ -11,6 +11,7 @@ const cmd = new command(
         const res_cmd = client.cmd_handler.resolve_command(cmd, args);
         if(res_cmd) {
             const cmdobj:command = res_cmd.command;
+            if(!client.aliases.has(msg.guild.id)) client.aliases.set(msg.guild.id, new Collection());
             let cmdcall = ''
             if (cmdobj.parents.length > 0)
                 cmdcall = `${cmdobj.parents.join(' ')} ${cmdobj.name}`;
@@ -18,8 +19,8 @@ const cmd = new command(
                 cmdcall = `${cmdobj.name}`;
             if(args.length > 0)
                 cmdcall += ` ${args.join(' ')}`;
-            client.aliases.set(alias, cmdcall);
-            client.db.db('aliases', {}).insert({alias: alias, fcmd: cmdcall});
+            client.aliases.get(msg.guild.id).set(alias, cmdcall);
+            client.db.db(msg.guild.id, {traversepath: ['aliases']}).insert({alias: alias, fcmd: cmdcall});
             msg.channel.send(`Set \`${alias}\` to call ${cmdcall}`);
         }
         else {

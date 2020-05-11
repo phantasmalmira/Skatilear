@@ -12,7 +12,7 @@ interface myClient {
     botownerid: string;
     commandprefix: string;
     commands: Discord.Collection<string, CMDS.command>;
-    aliases: Discord.Collection<string, string>;
+    aliases: Discord.Collection<string, Discord.Collection<string, string>>;
     cmd_handler: CMDS.command_handler;
     settings: settings;
     init_commands():number;
@@ -31,7 +31,7 @@ class myClient extends Discord.Client {
         this.settings = new settings(this.db);
         this.commandprefix = _commandprefix;
         this.commands = new Discord.Collection<string, CMDS.command>();
-        this.aliases = new Discord.Collection<string, string>();
+        this.aliases = new Discord.Collection<string, Discord.Collection<string, string>>();
         this.cmd_handler = new CMDS.command_handler(this, './commands/');
         this.init_commands();
     }

@@ -14,9 +14,13 @@ const cmd = new command(
     description : '', 
     usage : ['<action : add | del | list>'],
     init : (client: myClient) => {
-        const aliasdb = client.db.db('aliases', {});
-        aliasdb.forEach((item) => {
-            client.aliases.set(item.alias, item.fcmd); 
+        const aliasdb = client.db.dbsInTraverse(['aliases']);
+        client.aliases.clear();
+        aliasdb.forEach((guild) => {
+            if(!client.aliases.has(guild.cname)) client.aliases.set(guild.cname, new Collection());
+            guild.forEach((item) => {
+                client.aliases.get(guild.cname).set(item.alias, item.fcmd); 
+            });
         });
     },
     allow_args: (msg: Message, args: string[]) => {return false;},

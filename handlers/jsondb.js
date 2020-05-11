@@ -38,19 +38,51 @@ const JSONdb = class {
         else
             return this._db(db_name, traversepath, this.collections);
     }
+    dbsInTraverse(traversepath, createIfMissing = true) {
+        if (createIfMissing)
+            return this._create_dbsInTraverse(traversepath, this.collections);
+        else
+            return this._dbsInTraverse(traversepath, this.collections);
+    }
+    _dbsInTraverse(traversepath, nextCollection) {
+        if (traversepath.length !== 0) {
+            const nextlayer = traversepath.shift();
+            const nextlayerCollections = nextCollection.branch.find(branch => branch.name === nextlayer);
+            if (!nextlayerCollections)
+                throw "TraversePathInvalid";
+            return this._dbsInTraverse(traversepath, nextlayerCollections);
+        }
+        else {
+            return nextCollection.base;
+        }
+    }
+    _create_dbsInTraverse(traversepath, nextCollection) {
+        if (traversepath.length !== 0) {
+            const nextlayer = traversepath.shift();
+            let nextlayerCollections = nextCollection.branch.find(branch => branch.name === nextlayer);
+            if (!nextlayerCollections) {
+                nextCollection.branch.push(new dbCollections(nextlayer));
+                nextlayerCollections = nextCollection.branch[nextCollection.branch.length - 1];
+            }
+            return this._dbsInTraverse(traversepath, nextlayerCollections);
+        }
+        else {
+            return nextCollection.base;
+        }
+    }
     _db(db_name, traversepath, nextCollection) {
         if (traversepath.length !== 0) {
             const nextlayer = traversepath.shift();
-            const nextlayerIndex = nextCollection.branch.findIndex(branch => branch.name === nextlayer);
-            if (nextlayerIndex === -1)
+            const nextlayerCollections = nextCollection.branch.find(branch => branch.name === nextlayer);
+            if (!nextlayerCollections)
                 throw "TraversePathInvalid";
-            return this._db(db_name, traversepath, nextCollection.branch[nextlayerIndex]);
+            return this._db(db_name, traversepath, nextlayerCollections);
         }
         else {
-            const targetdb = nextCollection.base.findIndex(collection => collection.cname === db_name);
-            if (targetdb === -1)
+            const targetdb = nextCollection.base.find(collection => collection.cname === db_name);
+            if (!targetdb)
                 throw "DBNotFound";
-            return nextCollection.base[targetdb];
+            return targetdb;
         }
     }
     _create_db(db_name, traversepath, nextCollection, path) {
@@ -58,22 +90,22 @@ const JSONdb = class {
             path = `${this.dbpath}/${traversepath.join('/')}/${db_name}.json`;
         if (traversepath.length !== 0) {
             const nextlayer = traversepath.shift();
-            let nextlayerIndex = nextCollection.branch.findIndex(branch => branch.name === nextlayer);
-            if (nextlayerIndex === -1) //branch not found
+            let nextlayerCollections = nextCollection.branch.find(branch => branch.name === nextlayer);
+            if (!nextlayerCollections) //branch not found
              {
                 nextCollection.branch.push(new dbCollections(nextlayer));
-                nextlayerIndex = nextCollection.branch.length - 1;
+                nextlayerCollections = nextCollection.branch[nextlayerCollections.branch.length - 1];
             }
-            return this._create_db(db_name, traversepath, nextCollection.branch[nextlayerIndex], path);
+            return this._create_db(db_name, traversepath, nextlayerCollections, path);
         }
         else {
-            let targetdb = nextCollection.base.findIndex(collection => collection.cname === db_name);
-            if (targetdb === -1) // db not found
+            let targetdb = nextCollection.base.find(collection => collection.cname === db_name);
+            if (!targetdb) // db not found
              {
                 nextCollection.base.push(new JSONCollections(path, db_name));
-                targetdb = nextCollection.base.length - 1;
+                targetdb = nextCollection.base[nextCollection.base.length - 1];
             }
-            return nextCollection.base[targetdb];
+            return targetdb;
         }
     }
 };

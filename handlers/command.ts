@@ -193,8 +193,8 @@ class command_handler {
         if(res_cmd) {
             res_cmdobj = res_cmd.command;
             res_cmdargs = res_cmd.args;
-        } else if (client.aliases.has(cmd)){
-            const faliasargs = client.aliases.get(cmd).split(/ +/g).concat(args);
+        } else if (client.aliases.has(msg.guild.id) && client.aliases.get(msg.guild.id).has(cmd)){
+            const faliasargs = client.aliases.get(msg.guild.id).get(cmd).split(/ +/g).concat(args);
             const aliascmd = faliasargs.shift();
             const alias_res_cmd = this.resolve_command(aliascmd, faliasargs);
             if(alias_res_cmd) {

@@ -7,9 +7,9 @@ const cmd = new command(
     name: 'del',
     run: async (client: myClient, msg: Message, args: string[]) => {
         const alias = args.shift();
-        if(client.aliases.has(alias)) {
-            const aliasfcmd = client.aliases.get(alias);
-            const aliasdb = client.db.db('aliases', {});
+        if(client.aliases.has(msg.guild.id) && client.aliases.get(msg.guild.id).has(alias)) {
+            const aliasfcmd = client.aliases.get(msg.guild.id).get(alias);
+            const aliasdb = client.db.db(msg.guild.id, {traversepath: ['aliases']});
             if(aliasdb.delete({alias: alias, fcmd: aliasfcmd}))
             {   
                 msg.reply(`Successfully deleted ${alias}.`);
