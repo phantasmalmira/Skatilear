@@ -20,7 +20,7 @@ const cmd = new command_1.command({
             msg.channel.send(`Scheduled tasks: \`\`\`${avail_keys}\`\`\``);
         }
     },
-    _security: [],
+    _security: ['ADMINISTRATOR'],
     _aliases: [],
     _parents: ['schedule'],
     _branches: [],

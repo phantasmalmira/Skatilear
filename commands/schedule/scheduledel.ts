@@ -18,7 +18,7 @@ const cmd = new command(
         }
 
     },
-    _security: [],
+    _security: ['ADMINISTRATOR'],
     _aliases : [], 
     _parents : ['schedule'], 
     _branches : [],

@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, PermissionString } from "discord.js";
 import { myClient } from "../index";
 import * as chalk from 'chalk';
 import * as fs from 'fs';
@@ -12,10 +12,17 @@ interface command {
     category: string;
     description: string;
     usage: string[];
-    security: string[];
+    security: security[];
     run(client: myClient, msg: Message, args: string[]): void;
     init(client: myClient): void;
 }
+
+type security = 
+| PermissionString 
+| 'DISABLED'
+| 'BOT_OWNER'
+| 'GUILD_OWNER';
+
 
 class command {
     constructor(
@@ -29,7 +36,7 @@ class command {
         }:{
             _name: string, 
             _run: (client: myClient, msg: Message, args:string[]) => void,
-            _security: string[], 
+            _security: security[], 
             _aliases?:string[], _parents?:string[], _branches?:command[],
             _category?:string, _description?:string, _usage?:string[],
              _init?:(client: myClient) => void
@@ -229,6 +236,7 @@ class command_handler {
     }
     has_perms(client: myClient, cmdobj: command, msg: Message) {
         let req_perms = [...cmdobj.security]; // Shallow copy
+        const guildmember = msg.guild.member(msg);
         while(req_perms.length > 0) {
             const cur_perm = req_perms.shift();
             if(cur_perm === 'BOT_OWNER') {
@@ -236,10 +244,50 @@ class command_handler {
                     return false;
             } else if (cur_perm === 'DISABLED') {
                 return false;
+            } else if (cur_perm === 'GUILD_OWNER') {
+                if(msg.author.id !== msg.guild.ownerID)
+                    return false;
+            } else {
+                if(!msg.guild.member(msg).hasPermission(cur_perm))
+                    return false;
             }
         }
         return true;
     }
 }
+
+/* Permission Model
+        ADMINISTRATOR                   (implicitly has all permissions, and bypasses all channel overwrites)
+        CREATE_INSTANT_INVITE           (create invitations to the guild)
+        KICK_MEMBERS        
+        BAN_MEMBERS     
+        MANAGE_CHANNELS                 (edit and reorder channels)
+        MANAGE_GUILD                    (edit the guild information, region, etc.)
+        ADD_REACTIONS                   (add new reactions to messages)
+        VIEW_AUDIT_LOG      
+        PRIORITY_SPEAKER        
+        STREAM      
+        VIEW_CHANNEL        
+        SEND_MESSAGES       
+        SEND_TTS_MESSAGES       
+        MANAGE_MESSAGES                 (delete messages and reactions)
+        EMBED_LINKS                     (links posted will have a preview embedded)
+        ATTACH_FILES        
+        READ_MESSAGE_HISTORY            (view messages that were posted prior to opening Discord)
+        MENTION_EVERYONE        
+        USE_EXTERNAL_EMOJIS             (use emojis from different guilds)
+        VIEW_GUILD_INSIGHTS     
+        CONNECT                         (connect to a voice channel)
+        SPEAK                           (speak in a voice channel)
+        MUTE_MEMBERS                    (mute members across all voice channels)
+        DEAFEN_MEMBERS                  (deafen members across all voice channels)
+        MOVE_MEMBERS                    (move members between voice channels)
+        USE_VAD                         (use voice activity detection)
+        CHANGE_NICKNAME     
+        MANAGE_NICKNAMES                (change other members' nicknames)
+        MANAGE_ROLES
+        MANAGE_WEBHOOKS
+        MANAGE_EMOJIS
+ */
 
 export {command, command_handler};

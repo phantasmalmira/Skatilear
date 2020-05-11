@@ -15,6 +15,10 @@ const cmd = new command_1.command({
             if (client.cmd_handler.valid_args(cmdobj, cmdargs)) {
                 if (!client.scheduleds.has(msg.guild.id))
                     client.scheduleds.set(msg.guild.id, new discord_js_1.Collection());
+                if (client.scheduleds.get(msg.guild.id).size >= 5) {
+                    msg.channel.send('Only a maximum of 5 tasks is allowed per guild.');
+                    return;
+                }
                 const s_args = res_cmd.args.length > 0 ? ` ${args.join(' ')}` : '';
                 let schedid;
                 const validchars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -36,7 +40,7 @@ const cmd = new command_1.command({
             msg.reply(`\`${cmd}\` is not a valid command.`);
         }
     },
-    _security: [],
+    _security: ['ADMINISTRATOR'],
     _aliases: [],
     _parents: ['schedule'],
     _branches: [],

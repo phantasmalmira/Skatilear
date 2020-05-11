@@ -17,7 +17,7 @@ const cmd = new command_1.command({
             msg.reply(`${schedid} had been removed from scheduled tasks successfully.`);
         }
     },
-    _security: [],
+    _security: ['ADMINISTRATOR'],
     _aliases: [],
     _parents: ['schedule'],
     _branches: [],

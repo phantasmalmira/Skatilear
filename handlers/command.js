@@ -193,6 +193,7 @@ class command_handler {
     }
     has_perms(client, cmdobj, msg) {
         let req_perms = [...cmdobj.security]; // Shallow copy
+        const guildmember = msg.guild.member(msg);
         while (req_perms.length > 0) {
             const cur_perm = req_perms.shift();
             if (cur_perm === 'BOT_OWNER') {
@@ -201,6 +202,11 @@ class command_handler {
             }
             else if (cur_perm === 'DISABLED') {
                 return false;
+            }
+            else {
+                const discord_perm = cur_perm;
+                if (!msg.guild.member(msg).hasPermission(discord_perm))
+                    return false;
             }
         }
         return true;
