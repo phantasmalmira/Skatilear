@@ -13,7 +13,7 @@ const cmd = new command(
             if(aliasdb.delete({alias: alias, fcmd: aliasfcmd}))
             {   
                 msg.reply(`Successfully deleted ${alias}.`);
-                client.aliases.delete(alias);
+                client.aliases.get(msg.guild.id).delete(alias);
             }
             else {
                 msg.reply(`Error occured during delete of ${alias}.`);
