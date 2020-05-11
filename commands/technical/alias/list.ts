@@ -4,8 +4,8 @@ import { Message } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'list',
-    _run: async (client: myClient, msg: Message, args: string[]) => {
+    name: 'list',
+    run: async (client: myClient, msg: Message, args: string[]) => {
         let msgcontent = '';
         let index = 1;
         client.aliases.forEach((val, key) => {
@@ -14,14 +14,14 @@ const cmd = new command(
         });
         msg.channel.send(`List of aliases:\n\`\`\`markdown\n${msgcontent}\`\`\``);
     },
-    _security: [],
-    _aliases : [], 
-    _parents : ['alias'], 
-    _branches : [],
-    _category : 'Alias', 
-    _description : '', 
-    _usage : [],
-    _init : (client: myClient) => {}
+    security: [],
+    aliases : [], 
+    parents : ['alias'], 
+    branches : [],
+    category : 'Alias', 
+    description : '', 
+    usage : [],
+    init : (client: myClient) => {}
     }
 )
 export {cmd};

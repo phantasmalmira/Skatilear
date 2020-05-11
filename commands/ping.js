@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../handlers/command");
 const cmd = new command_1.command({
-    _name: 'ping',
-    _run: async (client, msg, args) => {
+    name: 'ping',
+    run: async (client, msg, args) => {
         let pingmsg = await msg.channel.send('🏓 Pinging');
         const serverping = pingmsg.createdAt.getTime() - msg.createdAt.getTime();
         `Server ping: ${serverping}`;
@@ -17,13 +17,13 @@ const cmd = new command_1.command({
                 timestamp: new Date()
             } });
     },
-    _security: [],
-    _aliases: [],
-    _parents: [],
-    _branches: [],
-    _category: 'Technical',
-    _description: '',
-    _usage: [],
-    _init: (client) => { }
+    security: [],
+    aliases: [],
+    parents: [],
+    branches: [],
+    category: 'Technical',
+    description: '',
+    usage: [],
+    init: (client) => { }
 });
 exports.cmd = cmd;

@@ -15,6 +15,7 @@ interface command {
     security: security[];
     run(client: myClient, msg: Message, args: string[]): void;
     init(client: myClient): void;
+    allow_args(args: string[]): boolean;
 }
 
 type security = 
@@ -27,32 +28,35 @@ type security =
 class command {
     constructor(
         {
-            _name = "", 
-            _run = (client: myClient, msg: Message, args: string[]) => {},
-            _security = [], 
-            _aliases = [], _parents = [], _branches = [],
-            _category = '', _description = '', _usage = [],
-            _init = (client: myClient) => {}
+            name = "", 
+            run = (client: myClient, msg: Message, args: string[]) => {},
+            security = [], 
+            aliases = [], parents = [], branches = [],
+            category = '', description = '', usage = [],
+            init,
+            allow_args = (args: string[]) => {return true}
         }:{
-            _name: string, 
-            _run: (client: myClient, msg: Message, args:string[]) => void,
-            _security: security[], 
-            _aliases?:string[], _parents?:string[], _branches?:command[],
-            _category?:string, _description?:string, _usage?:string[],
-             _init?:(client: myClient) => void
+            name: string, 
+            run: (client: myClient, msg: Message, args:string[]) => void,
+            security: security[], 
+            aliases?:string[], parents?:string[], branches?:command[],
+            category?:string, description?:string, usage?:string[],
+            init?:(client: myClient) => void,
+            allow_args?:(args:string[]) => boolean
         }) 
     {
-        this.name = _name;
-        this.run = _run;
-        this.security = _security;
-        this.aliases = _aliases;
-        this.parents = _parents;
+        this.name = name;
+        this.run = run;
+        this.security = security;
+        this.aliases = aliases;
+        this.parents = parents;
         this._parents = [];
-        this.branches = _branches;
-        this.category = _category;
-        this.description = _description;
-        this.usage = _usage;
-        this.init = _init;
+        this.branches = branches;
+        this.category = category;
+        this.description = description;
+        this.usage = usage;
+        this.init = init;
+        this.allow_args = allow_args;
     }
 }
 
@@ -120,7 +124,8 @@ class command_handler {
         while(sorted.length > 0)
         {
             let element = sorted.shift();
-            element.init(this.client);
+            if(element.init)
+                element.init(this.client);
             this.apply_command(element);
         }
     }

@@ -4,8 +4,8 @@ import { Message, Collection } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'del',
-    _run: async (client: schedClient, msg: Message, args: string[]) => {
+    name: 'del',
+    run: async (client: schedClient, msg: Message, args: string[]) => {
         const schedid = args.shift();
         if(!client.scheduleds.has(msg.guild.id)) client.scheduleds.set(msg.guild.id, new Collection());
         if(!client.scheduleds.get(msg.guild.id).has(schedid)) {
@@ -18,14 +18,14 @@ const cmd = new command(
         }
 
     },
-    _security: ['ADMINISTRATOR'],
-    _aliases : [], 
-    _parents : ['schedule'], 
-    _branches : [],
-    _category : 'Technical', 
-    _description : '', 
-    _usage : ['<schedid>'],
-    _init : (client: schedClient) => {}
+    security: ['ADMINISTRATOR'],
+    aliases : [], 
+    parents : ['schedule'], 
+    branches : [],
+    category : 'Technical', 
+    description : '', 
+    usage : ['<schedid>'],
+    init : (client: schedClient) => {}
     }
 )
 export {cmd};

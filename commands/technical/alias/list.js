@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../../handlers/command");
 const cmd = new command_1.command({
-    _name: 'list',
-    _run: async (client, msg, args) => {
+    name: 'list',
+    run: async (client, msg, args) => {
         let msgcontent = '';
         let index = 1;
         client.aliases.forEach((val, key) => {
@@ -12,13 +12,13 @@ const cmd = new command_1.command({
         });
         msg.channel.send(`List of aliases:\n\`\`\`markdown\n${msgcontent}\`\`\``);
     },
-    _security: [],
-    _aliases: [],
-    _parents: ['alias'],
-    _branches: [],
-    _category: 'Alias',
-    _description: '',
-    _usage: [],
-    _init: (client) => { }
+    security: [],
+    aliases: [],
+    parents: ['alias'],
+    branches: [],
+    category: 'Alias',
+    description: '',
+    usage: [],
+    init: (client) => { }
 });
 exports.cmd = cmd;

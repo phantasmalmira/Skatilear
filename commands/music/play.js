@@ -35,8 +35,8 @@ const play_yt = (conn, msg, client) => {
     player.player.on('error', console.error);
 };
 const cmd = new command_1.command({
-    _name: 'play',
-    _run: async (client, msg, args) => {
+    name: 'play',
+    run: async (client, msg, args) => {
         if (!msg.member.voice.channel) {
             msg.reply(`Please join a voice channel first.`);
             return;
@@ -127,14 +127,14 @@ const cmd = new command_1.command({
             }
         }
     },
-    _security: [],
-    _aliases: [],
-    _parents: [],
-    _branches: [],
-    _category: 'Music',
-    _description: '',
-    _usage: ['<link | search>'],
-    _init: (client) => {
+    security: [],
+    aliases: [],
+    parents: [],
+    branches: [],
+    category: 'Music',
+    description: '',
+    usage: ['<link | search>'],
+    init: (client) => {
         client.music = new discord_js_1.Collection();
         client.cursong = new discord_js_1.Collection();
     }

@@ -4,8 +4,8 @@ import { Message } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'stop',
-    _run: async (client: musicClient, msg: Message, args: string[]) => {
+    name: 'stop',
+    run: async (client: musicClient, msg: Message, args: string[]) => {
         if(client.music.has(msg.guild.id))
         {
             const player = client.music.get(msg.guild.id);
@@ -18,14 +18,14 @@ const cmd = new command(
             msg.reply(`Nothing had ever played.`);
         }
     },
-    _security: [],
-    _aliases : [], 
-    _parents : [], 
-    _branches : [],
-    _category : 'Music', 
-    _description : '', 
-    _usage : [],
-    _init : (client: musicClient) => {}
+    security: [],
+    aliases : [], 
+    parents : [], 
+    branches : [],
+    category : 'Music', 
+    description : '', 
+    usage : [],
+    init : (client: musicClient) => {}
     }
 )
 export {cmd};

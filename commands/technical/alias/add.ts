@@ -4,8 +4,8 @@ import {myClient} from '../../../index';
 
 const cmd = new command(
     {
-    _name: 'add',
-    _run: async (client: myClient, msg: Message, args: string[]) => {
+    name: 'add',
+    run: async (client: myClient, msg: Message, args: string[]) => {
         const alias = args.shift();
         const cmd = args.shift();
         const res_cmd = client.cmd_handler.resolve_command(cmd, args);
@@ -26,14 +26,14 @@ const cmd = new command(
             msg.reply(`\`${cmd}\` is not a valid command.`);
         }
     },
-    _security: [],
-    _aliases : [], 
-    _parents : ['alias'], 
-    _branches : [],
-    _category : 'Alias', 
-    _description : '', 
-    _usage : ['<alias>', '<command>', '<args?...>'],
-    _init : (client: myClient) => {}
+    security: [],
+    aliases : [], 
+    parents : ['alias'], 
+    branches : [],
+    category : 'Alias', 
+    description : '', 
+    usage : ['<alias>', '<command>', '<args?...>'],
+    init : (client: myClient) => {}
     }
 )
 export {cmd};

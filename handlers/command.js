@@ -3,18 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = require("chalk");
 const fs = require("fs");
 class command {
-    constructor({ _name = "", _run = (client, msg, args) => { }, _security = [], _aliases = [], _parents = [], _branches = [], _category = '', _description = '', _usage = [], _init = (client) => { } }) {
-        this.name = _name;
-        this.run = _run;
-        this.security = _security;
-        this.aliases = _aliases;
-        this.parents = _parents;
+    constructor({ name = "", run = (client, msg, args) => { }, security = [], aliases = [], parents = [], branches = [], category = '', description = '', usage = [], init, allow_args = (args) => { return true; } }) {
+        this.name = name;
+        this.run = run;
+        this.security = security;
+        this.aliases = aliases;
+        this.parents = parents;
         this._parents = [];
-        this.branches = _branches;
-        this.category = _category;
-        this.description = _description;
-        this.usage = _usage;
-        this.init = _init;
+        this.branches = branches;
+        this.category = category;
+        this.description = description;
+        this.usage = usage;
+        this.init = init;
+        this.allow_args = allow_args;
     }
 }
 exports.command = command;
@@ -66,7 +67,8 @@ class command_handler {
         let sorted = this.commands.sort((a, b) => a.parents.length - b.parents.length);
         while (sorted.length > 0) {
             let element = sorted.shift();
-            element.init(this.client);
+            if (element.init)
+                element.init(this.client);
             this.apply_command(element);
         }
     }

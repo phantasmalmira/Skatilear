@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../handlers/command");
 const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
-    _name: 'add',
-    _run: async (client, msg, args) => {
+    name: 'add',
+    run: async (client, msg, args) => {
         const interval = parseInt(args.shift());
         const cmd = args.shift();
         const res_cmd = client.cmd_handler.resolve_command(cmd, args);
@@ -40,13 +40,13 @@ const cmd = new command_1.command({
             msg.reply(`\`${cmd}\` is not a valid command.`);
         }
     },
-    _security: ['ADMINISTRATOR'],
-    _aliases: [],
-    _parents: ['schedule'],
-    _branches: [],
-    _category: 'Technical',
-    _description: '',
-    _usage: ['<interval[seconds]:_int>', '<command>', '<args?...>'],
-    _init: (client) => { }
+    security: ['ADMINISTRATOR'],
+    aliases: [],
+    parents: ['schedule'],
+    branches: [],
+    category: 'Technical',
+    description: '',
+    usage: ['<interval[seconds]:_int>', '<command>', '<args?...>'],
+    init: (client) => { }
 });
 exports.cmd = cmd;

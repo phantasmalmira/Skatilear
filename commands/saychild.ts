@@ -4,18 +4,18 @@ import { Message } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'say_child',
-    _run: async (client: myClient, msg: Message, args: string[]) => {
+    name: 'say_child',
+    run: async (client: myClient, msg: Message, args: string[]) => {
         msg.channel.send('say_child run');
     },
-    _security: ['DISABLED'],
-    _aliases : ['sc'], 
-    _parents : ['say'], 
-    _branches : [],
-    _category : 'Misc', 
-    _description : '', 
-    _usage : ['<abc>', '<bcd>'],
-    _init : (client: myClient) => {}
+    security: ['DISABLED'],
+    aliases : ['sc'], 
+    parents : ['say'], 
+    branches : [],
+    category : 'Misc', 
+    description : '', 
+    usage : ['<abc>', '<bcd>'],
+    init : (client: myClient) => {}
     }
 )
 export {cmd};

@@ -24,8 +24,8 @@ const child_man = (prefix: string, cmdobj: command):string[] => {
 
 const cmd = new command(
     {
-    _name: 'help',
-    _run: async (client: myClient, msg: Message, args: string[]) => {
+    name: 'help',
+    run: async (client: myClient, msg: Message, args: string[]) => {
         let help_ = '';
         let cmdcategories:string[] = [];
         client.commands.forEach( val => {
@@ -51,14 +51,14 @@ const cmd = new command(
             description: help_
         }});
     },
-    _security: [],
-    _aliases : [], 
-    _parents : [], 
-    _branches : [],
-    _category : 'Info', 
-    _description : '', 
-    _usage : [],
-    _init : (client: myClient) => {}
+    security: [],
+    aliases : [], 
+    parents : [], 
+    branches : [],
+    category : 'Info', 
+    description : '', 
+    usage : [],
+    init : (client: myClient) => {}
     }
 )
 export {cmd};

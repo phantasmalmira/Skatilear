@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../handlers/command");
 const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
-    _name: 'del',
-    _run: async (client, msg, args) => {
+    name: 'del',
+    run: async (client, msg, args) => {
         const schedid = args.shift();
         if (!client.scheduleds.has(msg.guild.id))
             client.scheduleds.set(msg.guild.id, new discord_js_1.Collection());
@@ -17,13 +17,13 @@ const cmd = new command_1.command({
             msg.reply(`${schedid} had been removed from scheduled tasks successfully.`);
         }
     },
-    _security: ['ADMINISTRATOR'],
-    _aliases: [],
-    _parents: ['schedule'],
-    _branches: [],
-    _category: 'Technical',
-    _description: '',
-    _usage: ['<schedid>'],
-    _init: (client) => { }
+    security: ['ADMINISTRATOR'],
+    aliases: [],
+    parents: ['schedule'],
+    branches: [],
+    category: 'Technical',
+    description: '',
+    usage: ['<schedid>'],
+    init: (client) => { }
 });
 exports.cmd = cmd;

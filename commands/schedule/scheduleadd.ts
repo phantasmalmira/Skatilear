@@ -5,8 +5,8 @@ import { Message, Collection } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'add',
-    _run: async (client: schedClient, msg: Message, args: string[]) => {
+    name: 'add',
+    run: async (client: schedClient, msg: Message, args: string[]) => {
         const interval = parseInt(args.shift());
         const cmd = args.shift();
         const res_cmd = client.cmd_handler.resolve_command(cmd, args);
@@ -48,14 +48,14 @@ const cmd = new command(
             msg.reply(`\`${cmd}\` is not a valid command.`);
         }
     },
-    _security: ['ADMINISTRATOR'],
-    _aliases : [], 
-    _parents : ['schedule'], 
-    _branches : [],
-    _category : 'Technical', 
-    _description : '', 
-    _usage : ['<interval[seconds]:_int>', '<command>', '<args?...>'],
-    _init : (client: schedClient) => {}
+    security: ['ADMINISTRATOR'],
+    aliases : [], 
+    parents : ['schedule'], 
+    branches : [],
+    category : 'Technical', 
+    description : '', 
+    usage : ['<interval[seconds]:_int>', '<command>', '<args?...>'],
+    init : (client: schedClient) => {}
     }
 )
 export {cmd};

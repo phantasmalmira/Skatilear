@@ -4,8 +4,8 @@ import { Message } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'queue',
-    _run: async (client: musicClient, msg: Message, args: string[]) => {
+    name: 'queue',
+    run: async (client: musicClient, msg: Message, args: string[]) => {
         if(client.cursong.has(msg.guild.id)) { 
             const cursong = client.cursong.get(msg.guild.id);
             let content = `**Current Track** 🎧\n${cursong.title}\n\n**Up Next** 🎼\n`;
@@ -21,14 +21,14 @@ const cmd = new command(
             msg.channel.send(`Not playing a song now.`);
         }
     },
-    _security: [],
-    _aliases : [], 
-    _parents : [], 
-    _branches : [],
-    _category : 'Music', 
-    _description : '', 
-    _usage : [],
-    _init : (client: musicClient) => {}
+    security: [],
+    aliases : [], 
+    parents : [], 
+    branches : [],
+    category : 'Music', 
+    description : '', 
+    usage : [],
+    init : (client: musicClient) => {}
     }
 )
 export {cmd};

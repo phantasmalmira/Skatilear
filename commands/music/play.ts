@@ -55,8 +55,8 @@ const play_yt = (conn: VoiceConnection, msg: Message, client: musicClient) => {
 
 const cmd = new command(
     {
-    _name: 'play',
-    _run: async (client: musicClient, msg: Message, args: string[]) => {
+    name: 'play',
+    run: async (client: musicClient, msg: Message, args: string[]) => {
         if(!msg.member.voice.channel) {
             msg.reply(`Please join a voice channel first.`);
             return;
@@ -147,14 +147,14 @@ const cmd = new command(
             }
         }
     },
-    _security: [],
-    _aliases : [], 
-    _parents : [], 
-    _branches : [],
-    _category : 'Music', 
-    _description : '', 
-    _usage : ['<link | search>'],
-    _init : (client: musicClient) => {
+    security: [],
+    aliases : [], 
+    parents : [], 
+    branches : [],
+    category : 'Music', 
+    description : '', 
+    usage : ['<link | search>'],
+    init : (client: musicClient) => {
         client.music = new Collection();
         client.cursong = new Collection();
     }

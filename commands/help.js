@@ -20,8 +20,8 @@ const child_man = (prefix, cmdobj) => {
     return helpstr;
 };
 const cmd = new command_1.command({
-    _name: 'help',
-    _run: async (client, msg, args) => {
+    name: 'help',
+    run: async (client, msg, args) => {
         let help_ = '';
         let cmdcategories = [];
         client.commands.forEach(val => {
@@ -47,13 +47,13 @@ const cmd = new command_1.command({
                 description: help_
             } });
     },
-    _security: [],
-    _aliases: [],
-    _parents: [],
-    _branches: [],
-    _category: 'Info',
-    _description: '',
-    _usage: [],
-    _init: (client) => { }
+    security: [],
+    aliases: [],
+    parents: [],
+    branches: [],
+    category: 'Info',
+    description: '',
+    usage: [],
+    init: (client) => { }
 });
 exports.cmd = cmd;

@@ -4,8 +4,8 @@ import { Message, Collection } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'list',
-    _run: async (client: schedClient, msg: Message, args: string[]) => {
+    name: 'list',
+    run: async (client: schedClient, msg: Message, args: string[]) => {
         if(!client.scheduleds.has(msg.guild.id)) client.scheduleds.set(msg.guild.id, new Collection());
         if(client.scheduleds.get(msg.guild.id).size == 0)
             msg.channel.send(`There are no scheduled tasks.`);
@@ -20,14 +20,14 @@ const cmd = new command(
             msg.channel.send(`Scheduled tasks: \`\`\`${avail_keys}\`\`\``);
         }
     },
-    _security: ['ADMINISTRATOR'],
-    _aliases : [], 
-    _parents : ['schedule'], 
-    _branches : [],
-    _category : 'Technical', 
-    _description : '', 
-    _usage : [],
-    _init : (client: schedClient) => {}
+    security: ['ADMINISTRATOR'],
+    aliases : [], 
+    parents : ['schedule'], 
+    branches : [],
+    category : 'Technical', 
+    description : '', 
+    usage : [],
+    init : (client: schedClient) => {}
     }
 )
 export {cmd};

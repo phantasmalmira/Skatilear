@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../../handlers/command");
 const cmd = new command_1.command({
-    _name: 'del',
-    _run: async (client, msg, args) => {
+    name: 'del',
+    run: async (client, msg, args) => {
         const alias = args.shift();
         if (client.aliases.has(alias)) {
             const aliasfcmd = client.aliases.get(alias);
@@ -20,13 +20,13 @@ const cmd = new command_1.command({
             msg.reply(`\`${alias}\` is not an alias, check ${client.commandprefix}alias list.`);
         }
     },
-    _security: [],
-    _aliases: [],
-    _parents: ['alias'],
-    _branches: [],
-    _category: 'Alias',
-    _description: '',
-    _usage: ['<alias>'],
-    _init: (client) => { }
+    security: [],
+    aliases: [],
+    parents: ['alias'],
+    branches: [],
+    category: 'Alias',
+    description: '',
+    usage: ['<alias>'],
+    init: (client) => { }
 });
 exports.cmd = cmd;

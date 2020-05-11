@@ -9,16 +9,16 @@ export {schedClient};
 
 const cmd = new command(
     {
-    _name: 'schedule',
-    _run: async (client: schedClient, msg: Message, args: string[]) => {},
-    _security: [],
-    _aliases : ['sched'], 
-    _parents : [], 
-    _branches : [],
-    _category : 'Technical', 
-    _description : '', 
-    _usage : ['<action: add | del | list>'],
-    _init : (client: schedClient) => {
+    name: 'schedule',
+    run: async (client: schedClient, msg: Message, args: string[]) => {},
+    security: [],
+    aliases : ['sched'], 
+    parents : [], 
+    branches : [],
+    category : 'Technical', 
+    description : '', 
+    usage : ['<action: add | del | list>'],
+    init : (client: schedClient) => {
         client.scheduleds = new Collection<string, Collection<string, NodeJS.Timer>>()
     }
     }

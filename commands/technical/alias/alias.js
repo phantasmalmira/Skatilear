@@ -2,17 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../../handlers/command");
 const cmd = new command_1.command({
-    _name: 'alias',
-    _run: async (client, msg, args) => {
-    },
-    _security: [],
-    _aliases: [],
-    _parents: [],
-    _branches: [],
-    _category: 'Alias',
-    _description: '',
-    _usage: ['<action : add | del | list>'],
-    _init: (client) => {
+    name: 'alias',
+    run: async (client, msg, args) => { },
+    security: [],
+    aliases: [],
+    parents: [],
+    branches: [],
+    category: 'Alias',
+    description: '',
+    usage: ['<action : add | del | list>'],
+    init: (client) => {
         const aliasdb = client.db.db('aliases', {});
         aliasdb.forEach((item) => {
             client.aliases.set(item.alias, item.fcmd);

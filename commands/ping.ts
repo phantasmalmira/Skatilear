@@ -4,8 +4,8 @@ import { Message } from 'discord.js';
 
 const cmd = new command(
     {
-    _name: 'ping',
-    _run: async (client: myClient, msg: Message, args: string[]) => {
+    name: 'ping',
+    run: async (client: myClient, msg: Message, args: string[]) => {
         let pingmsg = await msg.channel.send('🏓 Pinging');
         const serverping = pingmsg.createdAt.getTime() - msg.createdAt.getTime();
         `Server ping: ${serverping}`
@@ -20,14 +20,14 @@ const cmd = new command(
         }});
         
     },
-    _security: [],
-    _aliases : [], 
-    _parents : [], 
-    _branches : [],
-    _category : 'Technical', 
-    _description : '', 
-    _usage : [],
-    _init : (client: myClient) => {}
+    security: [],
+    aliases : [], 
+    parents : [], 
+    branches : [],
+    category : 'Technical', 
+    description : '', 
+    usage : [],
+    init : (client: myClient) => {}
     }
 )
 export {cmd};
