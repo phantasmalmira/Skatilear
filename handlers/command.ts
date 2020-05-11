@@ -103,7 +103,7 @@ class command_handler {
         let js: string[] = [];
         ls.forEach( s => {
             const lstat = fs.lstatSync(basepath+path+s);
-            if(lstat.isFile() && s.endsWith('.js'))
+            if(lstat.isFile() && s.endsWith('.js') && !s.startsWith('_'))
                 js.push(s);
             else if (lstat.isDirectory())
                 dirs.push(s);
@@ -217,30 +217,6 @@ class command_handler {
         } else {
             msg.channel.send(`Unknown command ${cmd}. Please check \`${client.commandprefix}help\`.`);
         }
-    }
-    valid_args(cmdobj: command, args: string[]) {
-        const usage = cmdobj.usage;
-        let reqargs = 0;
-        usage.forEach( u => {if (!u.includes('?')) ++reqargs;} );
-        if(args.length < reqargs) return false;
-        for(let i = 0; i < args.length; ++i) {
-            const arg = args[i];
-            const u_req = usage[i];
-            if(!u_req) break; //undefined usage req for this arg, out-of-bounds
-            if(!u_req.includes(':')) continue; //no special req for this arg
-            const u_format = u_req.substring(u_req.indexOf(':') + 1, u_req.length - 1).trim();
-            const u_req_format = u_format.match(/\w*[^ \|]/g);
-            let allowed = true;
-            for(const _f of u_req_format) {
-                if( _f === '_int' && !isNaN( parseInt(arg) ) ) allowed = true; // args is req to be int
-                else if (!(arg.toLowerCase() === _f)) allowed = false;
-                else allowed = true;
-                if(allowed) break;
-            }
-            if(allowed) continue;
-            return false;
-        }
-        return true;
     }
     has_perms(client: myClient, cmdobj: command, msg: Message) {
         let req_perms = [...cmdobj.security]; // Shallow copy
