@@ -194,23 +194,22 @@ class command_handler {
     has_perms(client, cmdobj, msg) {
         let req_perms = [...cmdobj.security]; // Shallow copy
         const guildmember = msg.guild.member(msg);
-        while (req_perms.length > 0) {
-            const cur_perm = req_perms.shift();
-            if (cur_perm === 'BOT_OWNER') {
-                if (msg.author.id !== client.botownerid)
-                    return false;
-            }
-            else if (cur_perm === 'DISABLED') {
+        if (req_perms.includes('BOT_OWNER')) {
+            req_perms.splice(req_perms.findIndex(perm => perm === 'BOT_OWNER'), 1);
+            if (msg.author.id !== client.botownerid)
                 return false;
-            }
-            else if (cur_perm === 'GUILD_OWNER') {
-                if (msg.author.id !== msg.guild.ownerID)
-                    return false;
-            }
-            else {
-                if (!msg.guild.member(msg).hasPermission(cur_perm))
-                    return false;
-            }
+        }
+        if (req_perms.includes('DISABLED')) {
+            req_perms.splice(req_perms.findIndex(perm => perm === 'DISABLED'), 1);
+            return false;
+        }
+        if (req_perms.includes('GUILD_OWNER')) {
+            req_perms.splice(req_perms.findIndex(perm => perm === 'GUILD_OWNER'), 1);
+            if (msg.guild.ownerID !== msg.author.id)
+                return false;
+        }
+        if (!guildmember.hasPermission(req_perms)) {
+            return false;
         }
         return true;
     }
