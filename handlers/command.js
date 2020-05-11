@@ -203,9 +203,12 @@ class command_handler {
             else if (cur_perm === 'DISABLED') {
                 return false;
             }
+            else if (cur_perm === 'GUILD_OWNER') {
+                if (msg.author.id !== msg.guild.ownerID)
+                    return false;
+            }
             else {
-                const discord_perm = cur_perm;
-                if (!msg.guild.member(msg).hasPermission(discord_perm))
+                if (!msg.guild.member(msg).hasPermission(cur_perm))
                     return false;
             }
         }

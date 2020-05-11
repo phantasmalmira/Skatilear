@@ -30,6 +30,7 @@ class myClient extends Discord.Client {
             return;
         let args = msg.content.slice(client.commandprefix.length).trim().split(/ +/g);
         let cmd = args.shift().toLowerCase();
+        console.log(`(${msg.guild.name}) ${msg.author.username} ⇶ ${this.commandprefix}${cmd} ${args.join(' ')}`);
         this.cmd_handler.resolve_run(client, msg, cmd, args);
     }
     init_commands() {
