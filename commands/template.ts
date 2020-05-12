@@ -14,7 +14,7 @@ const cmd = new command(
     description : '', 
     usage : [],
     //init : (client: myClient) => {},
-    //allow_args: (args: string[]) => {return true;},
+    //allow_args: (msg: Message, args: string[]) => {return true;},
     }
 )
 export {cmd};
