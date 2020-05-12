@@ -13,7 +13,7 @@ class settings {
             guildvalue = null;
         let globalvalue = this.getGlobalSetting(key);
         if (guildvalue)
-            return globalvalue;
+            return guildvalue;
         else if (globalvalue)
             return globalvalue;
         else

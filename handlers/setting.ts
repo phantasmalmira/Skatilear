@@ -24,7 +24,7 @@ class settings {
             guildvalue = this.getGuildSetting(key, guildid);
         else guildvalue = null;
         let globalvalue = this.getGlobalSetting(key);
-        if(guildvalue) return globalvalue
+        if(guildvalue) return guildvalue;
         else if(globalvalue) return globalvalue;
         else return null;
     }
