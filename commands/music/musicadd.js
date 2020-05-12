@@ -4,7 +4,7 @@ const command_1 = require("../../handlers/command");
 const _music_1 = require("./_music");
 const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
-    name: 'newplay',
+    name: 'play',
     run: async (client, msg, args) => {
         if (!msg.member.voice.channel) {
             msg.reply(`Please join a voice channel first.`);
@@ -83,7 +83,7 @@ const cmd = new command_1.command({
     aliases: [],
     parents: [],
     branches: [],
-    category: '',
+    category: 'Music',
     description: '',
     usage: ['<link | search>'],
     init: (client) => {

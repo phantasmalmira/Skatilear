@@ -4,7 +4,7 @@ import { Message, Collection, MessageReaction, User, MessageEmbed } from 'discor
 
 const cmd = new command(
     {
-    name: 'newplay',
+    name: 'play',
     run: async (client: MusicClient, msg: Message, args: string[]) => {
         if (!msg.member.voice.channel) {
             msg.reply(`Please join a voice channel first.`);
@@ -86,7 +86,7 @@ const cmd = new command(
     aliases : [], 
     parents : [], 
     branches : [],
-    category : '', 
+    category : 'Music', 
     description : '', 
     usage : ['<link | search>'],
     init : (client: MusicClient) => {

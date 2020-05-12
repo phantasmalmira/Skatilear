@@ -4,33 +4,22 @@ import { Message, MessageEmbed } from 'discord.js';
 
 const cmd = new command(
     {
-    name: 'newskip',
+    name: 'stop',
     run: async (client: MusicClient, msg: Message, args: string[]) => {
         if (!msg.member.voice.channel) {
             msg.reply(`Please join a voice channel first.`);
             return;
         }
-        let skipped = false;
         if(client.guildPlayers.has(msg.guild.id)) {
             const player = client.guildPlayers.get(msg.guild.id);
-            if(player.nowPlaying) {
-                player.dispatcher.end();
-                skipped = true;
-                await new Promise(resolve => setTimeout(resolve, 500));
-                let nowplaying;
-                if(player.nowPlaying)
-                    nowplaying = player.nowPlaying.title;
-                else
-                    nowplaying = 'Nothing';
-                const skippedEmbed = new MessageEmbed()
-                .setTitle('Skipped Song 🎵 Now playing ')
-                .setDescription(`${nowplaying}`);
-                msg.channel.send(skippedEmbed);
-            }
-        }
-        if(!skipped) {
+            player.stop();
+            const stopEmbed = new MessageEmbed()
+            .setTitle('Stopped player')
+            .setDescription('Guild player had been stopped');
+            msg.channel.send(stopEmbed);
+        } else {
             const noopEmbed = new MessageEmbed()
-            .setTitle('Skip failure 🚫')
+            .setTitle('Stop failure 🚫')
             .setDescription('There is no active player currently');
             msg.channel.send(noopEmbed);
         }
@@ -39,7 +28,7 @@ const cmd = new command(
     aliases : [], 
     parents : [], 
     branches : [],
-    category : '', 
+    category : 'Music', 
     description : '', 
     usage : [],
     //init : (client: myClient) => {},

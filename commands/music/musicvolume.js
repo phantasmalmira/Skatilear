@@ -24,7 +24,7 @@ const cmd = new command_1.command({
     aliases: [],
     parents: [],
     branches: [],
-    category: '',
+    category: 'Music',
     description: '',
     usage: ['<volume: (0 - 1.0]>'],
     //init : (client: myClient) => {},

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../handlers/command");
 const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
-    name: 'newqueue',
+    name: 'queue',
     run: async (client, msg, args) => {
         let playing = false;
         if (client.guildPlayers.has(msg.guild.id)) {
@@ -31,7 +31,7 @@ const cmd = new command_1.command({
     aliases: [],
     parents: [],
     branches: [],
-    category: '',
+    category: 'Music',
     description: '',
     usage: [],
 });

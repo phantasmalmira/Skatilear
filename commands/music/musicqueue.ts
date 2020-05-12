@@ -4,7 +4,7 @@ import { Message, MessageEmbed } from 'discord.js';
 
 const cmd = new command(
     {
-    name: 'newqueue',
+    name: 'queue',
     run: async (client: MusicClient, msg: Message, args: string[]) => {
         let playing = false;
         if(client.guildPlayers.has(msg.guild.id)) { 
@@ -35,7 +35,7 @@ const cmd = new command(
     aliases : [], 
     parents : [], 
     branches : [],
-    category : '', 
+    category : 'Music', 
     description : '', 
     usage : [],
     //init : (client: myClient) => {},
