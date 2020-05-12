@@ -75,11 +75,14 @@ class MusicPlayer {
             this.dispatcher.on('error', console.error);
         }
     }
-    disconnect() {
+    stop() {
         this.nowPlaying = null;
         this.queue = [];
         this.repeatQueue = [];
         this.dispatcher.end();
+    }
+    disconnect() {
+        this.stop();
         this.silentcount = 0;
         this.v_connection.disconnect();
     }
