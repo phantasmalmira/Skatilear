@@ -14,7 +14,7 @@ const cmd = new command(
                 playing = true;
                 let description = `**Current Track** 🎧\n${player.nowPlaying.title}\n\n**Up Next** 🎶\n`;
                 player.queue.forEach( (song, index) => {
-                    description += `${index}. ${song.title}\n`;
+                    description += `${index + 1}. ${song.title}\n`;
                 });
 
                 const queueEmbed = new MessageEmbed()
