@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("../../handlers/command");
 const _service_1 = require("./_service");
+const discord_js_1 = require("discord.js");
 const cmd = new command_1.command({
     name: 'check',
     run: async (client, msg, args) => {
@@ -14,7 +15,16 @@ const cmd = new command_1.command({
         }
         _service_1.ServiceMonitor.CheckService([host, port], { timeout: timeout })
             .then(res => {
-            msg.channel.send(`${name}\n(${host}:${port}) is ${(res.online ? 'Online' : 'Offline')}.`);
+            const embed = new discord_js_1.MessageEmbed()
+                .setTitle(`Service **(${name})**`)
+                .setDescription(`*${name}* is now **${(res.online ? 'Up' : 'Down')}**`)
+                .setFooter(`${name} | ${res.host}:${res.port}`)
+                .setTimestamp(new Date());
+            if (res.online)
+                embed.setColor('#2ae85d');
+            else
+                embed.setColor('#eb2d36');
+            msg.channel.send(embed);
         })
             .catch(e => {
             msg.channel.send(`Error occured during check:\`\`\`${e}\`\`\``);

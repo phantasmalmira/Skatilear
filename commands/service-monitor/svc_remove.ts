@@ -8,14 +8,18 @@ const cmd = new command(
     name: 'remove',
     run: async (client: MonitorClient, msg: Message, args: string[]) => {
         const svcname = args.shift();
+        const reEmbed = new MessageEmbed()
+        .setTitle(`Remove Service 🚫`);
         if(!client.guildMonitors.has(msg.guild.id) || !client.guildMonitors.get(msg.guild.id).has(svcname)) {
-            msg.channel.send(`Invalid service, please check ${client.commandprefix}service list.`);
+            reEmbed.setDescription(`Invalid service, please check ${client.commandprefix}service list.`);
+            msg.channel.send(reEmbed);
             return;
         }
         const mtask = client.guildMonitors.get(msg.guild.id).get(svcname);
         clearInterval(mtask.task);
         client.guildMonitors.get(msg.guild.id).delete(mtask.name);
-        msg.channel.send(`Successfully deleted ${mtask.name} from services monitored.`);
+        reEmbed.setDescription(`Successfully deleted ${mtask.name} from services monitored.`)
+        msg.channel.send(reEmbed);
     },
     security: [],
     aliases : [], 

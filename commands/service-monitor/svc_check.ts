@@ -16,7 +16,16 @@ const cmd = new command(
         }
         ServiceMonitor.CheckService([host, port], {timeout: timeout})
         .then( res => {
-            msg.channel.send(`${name}\n(${host}:${port}) is ${(res.online ? 'Online': 'Offline')}.`);
+            const embed = new MessageEmbed()
+            .setTitle(`Service **(${name})**`)
+            .setDescription(`*${name}* is now **${(res.online ? 'Up': 'Down')}**`)
+            .setFooter(`${name} | ${res.host}:${res.port}`)
+            .setTimestamp(new Date());
+            if(res.online)
+                embed.setColor('#2ae85d');
+            else
+                embed.setColor('#eb2d36');
+            msg.channel.send(embed);
         })
         .catch( e => {
             msg.channel.send(`Error occured during check:\`\`\`${e}\`\`\``);

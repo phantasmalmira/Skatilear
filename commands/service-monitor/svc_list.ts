@@ -7,8 +7,11 @@ const cmd = new command(
     {
     name: 'list',
     run: async (client: MonitorClient, msg: Message, args: string[]) => {
+        const msgEmbed = new MessageEmbed()
+        .setTitle('Services Monitored 📶')
         if(!client.guildMonitors.has(msg.guild.id) || client.guildMonitors.get(msg.guild.id).size === 0) {
-            msg.channel.send(`No services are monitored in this guild.`);
+            msgEmbed.setDescription(`No services are monitored in this guild.`);
+            msg.channel.send(msgEmbed);
             return;
         }
         let msgcontent = '';
@@ -17,9 +20,7 @@ const cmd = new command(
             msgcontent += `${index}. ${svc.name} || ${svc.host}:${svc.port}\n`;
             ++index;
         }
-        const msgEmbed = new MessageEmbed()
-        .setTitle('Services Monitored 📶')
-        .setDescription(msgcontent);
+        msgEmbed.setDescription(msgcontent);
         msg.channel.send(msgEmbed);
     },
     security: [],

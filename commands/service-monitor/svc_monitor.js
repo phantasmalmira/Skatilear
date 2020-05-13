@@ -22,14 +22,26 @@ const cmd = new command_1.command({
                 msg.channel.send(`Error occured during checking service (${mtask.name})`);
             if (res) {
                 if (res.changed) {
-                    msg.channel.send(`Service (${mtask.name})\nhad gone ${(res.online ? 'Up' : 'Down')}`);
+                    const embed = new discord_js_1.MessageEmbed()
+                        .setTitle(`Service **(${mtask.name})**`)
+                        .setDescription(`*${mtask.name}* had gone **${(res.online ? 'Up' : 'Down')}**`)
+                        .setFooter(`${mtask.name} | ${mtask.host}:${mtask.port}`)
+                        .setTimestamp(new Date());
+                    if (res.online)
+                        embed.setColor('#2ae85d');
+                    else
+                        embed.setColor('#eb2d36');
+                    msg.channel.send(embed);
                 }
             }
         }, { timeout, interval });
         if (!client.guildMonitors.has(msg.guild.id))
             client.guildMonitors.set(msg.guild.id, new discord_js_1.Collection());
         client.guildMonitors.get(msg.guild.id).set(mtask.name, mtask);
-        msg.channel.send(`Successfully added the service monitor\nService: ${mtask.name}\nHost: ${mtask.host}:${mtask.port}`);
+        const infoembed = new discord_js_1.MessageEmbed()
+            .setTitle(`Service Added 📶`)
+            .setDescription(`**${mtask.name}** is now monitored\nHost: \`${mtask.host}:${mtask.port}\`\n`);
+        msg.channel.send(infoembed);
     },
     security: [],
     aliases: [],
