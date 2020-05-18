@@ -91,6 +91,8 @@ class command_handler {
             let parent = cmd._parents.shift();
             if (typeof parentcmd === 'undefined')
                 parentcmd = this.client.commands.get(parent);
+            else
+                parentcmd = parentcmd.branches.find((val) => val.name === parent);
             this.apply_command(cmd, parentcmd);
         }
         else {
